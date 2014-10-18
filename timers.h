@@ -9,7 +9,7 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
-#define INI_8MS_1S 125
+#define INI_4MS_1S 250
 
 void initTimers();
 

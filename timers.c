@@ -10,9 +10,9 @@
 #include "timers.h"
 #include "devices.h"
 #include "Thermometer.h"
-#include "gpio.h"
+#include "sseg.h"
 
-int timer_8ms_1s;
+int timer_4ms_1s;
 
 void initTimers()
 {
@@ -25,20 +25,20 @@ void initTimers()
   // Clock/8 = 1MHz/64 = 64µs per tick
   TCCR0B = _BV(CS01) | _BV(CS00);
   // Set compare match to be 128 (64µs*128 = 8ms)
-  OCR0A = 128;
+  OCR0A = 64;
   // Set up the scalars
-  timer_8ms_1s = INI_8MS_1S;
+  timer_4ms_1s = INI_4MS_1S;
 }
 
 ISR(TIMER0_COMPA_vect)
 {
-  timer_8ms_1s--;
-  if (timer_8ms_1s==0)
+  updateDisplay();
+
+  timer_4ms_1s--;
+  if (timer_4ms_1s==0)
   {
     // Occurs every second
-    timer_8ms_1s = INI_8MS_1S;
+    timer_4ms_1s = INI_4MS_1S;
     // Flash at us
-    portD ^= 0x80;
-    setPorts();
   }
 }
