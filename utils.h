@@ -12,4 +12,6 @@
 void initMicro();
 void initPorts();
 
+unsigned char setNthBit(unsigned char, unsigned char, int);
+
 #endif /* UTILS_H_ */

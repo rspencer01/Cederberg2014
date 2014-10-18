@@ -53,3 +53,10 @@ void initPorts()
   // Pin 7: SG6
   DDRD = 0b11110011;
 }
+
+// Returns the destination character with the nth bit set
+// to the nth bit of the source.
+unsigned char setNthBit(unsigned char dest, unsigned char src, int n)
+{
+  return dest ^ ( (dest & (1<<n)) ^ (src &(1<<n)) );
+}
