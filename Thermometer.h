@@ -2,7 +2,7 @@
  * Thermometer.h
  *
  * Created: 2014/09/17 09:29:32 PM
- *  Author: Robert
+ *  Author: Robert Spencer
  */ 
 
 

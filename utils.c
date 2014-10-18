@@ -2,21 +2,21 @@
  * utils.c
  *
  * Created: 2014/03/21 11:36:43 AM
- *  Author: Robert
+ *  Author: Robert Spencer
  */ 
 
 #include <avr/io.h>
 
 void initMicro()
 {
-	// Disable all interrupts
-	SREG &= ~_BV(SREG_I);
+  // Disable all interrupts
+  SREG &= ~_BV(SREG_I);
   
-	// Clear these bits, in this order, on startup/restart, as advised in datasheet (pg51)
-	MCUSR &= ~_BV(WDRF);
-	WDTCSR &= ~_BV(WDE);
+  // Clear these bits, in this order, on startup/restart, as advised in datasheet (pg51)
+  MCUSR &= ~_BV(WDRF);
+  WDTCSR &= ~_BV(WDE);
   
-	SREG |= _BV(SREG_I);	
+  SREG |= _BV(SREG_I);	
 }
 
 void initPorts()
