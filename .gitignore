@@ -1,0 +1,9 @@
+# All AtmelStudio stuff
+Debug/
+*.atsln
+*.atsuo
+*.cproj
+
+# All backups
+*.bak
+*~
