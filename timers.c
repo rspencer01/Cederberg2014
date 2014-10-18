@@ -6,11 +6,11 @@
  */ 
 
 #include <avr/interrupt.h>
-#include <avr/io.h>
 #include "sseg.h"
 #include "timers.h"
 #include "devices.h"
 #include "Thermometer.h"
+#include "gpio.h"
 
 int timer_8ms_1s;
 
@@ -38,6 +38,7 @@ ISR(TIMER0_COMPA_vect)
     // Occurs every second
     timer_8ms_1s = INI_8MS_1S;
     // Flash at us
-    PORTD ^= 0x80;
+    portD ^= 0x80;
+    setPorts();
   }
 }

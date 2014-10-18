@@ -5,11 +5,10 @@
  *  Author: Robert Spencer
  */ 
 
-
-#include <avr/io.h>
 #include "Thermometer.h"
 #include "utils.h"
 #include "timers.h"
+#include "gpio.h"
 
 int main(void)
 {
@@ -18,9 +17,10 @@ int main(void)
   initPorts();
   initTimers();
   // Set all ports to zero (all segments active), except one display enable.
-  PORTB = 0x0;
-  PORTC = 0x0;
-  PORTD = 0b00010000;
+  portB = 0x0;
+  portC = 0x0;
+  portD = 0b00010000;
+  setPorts();
   // Loop forever
   while(1);
 }
