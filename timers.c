@@ -11,9 +11,9 @@
 #include "devices.h"
 #include "Thermometer.h"
 #include "sseg.h"
+#include "gpio.h"
 
 int timer_4ms_1s;
-int count = 0;
 
 void initTimers()
 {
@@ -41,8 +41,9 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    // Write a dummy number to the display for testing purposes.
-    count++;
-    writeNumber(count);
+    if (readPushButton(1))
+      writeNumber(1);
+    else
+      writeNumber(0);
   }
 }

@@ -15,7 +15,15 @@ extern unsigned char portB;
 extern unsigned char portC;
 extern unsigned char portD;
 
+// The push buttons must have pull up resistors activated.
+// Thus the following pins must be high
+#define PORTD_PULL_UP 0b00001100
+
 // Updates all the output ports.
 void setPorts();
+
+// Reads the push button (0 or 1) and returns a non zero
+// char if it is pushed.
+char readPushButton(int);
 
 #endif /* GPIO_H_ */

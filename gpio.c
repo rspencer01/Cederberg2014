@@ -6,6 +6,7 @@
  */ 
 
 #include <avr/io.h>
+#include "gpio.h"
 
 unsigned char portB;
 unsigned char portC;
@@ -17,5 +18,10 @@ void setPorts()
 {
   PORTB = portB;
   PORTC = portC;
-  PORTD = portD;
+  PORTD = portD | PORTD_PULL_UP;
+}
+
+char readPushButton(int id)
+{
+  return (PIND & (0x08 >> id) ) ^ (0x08 >> id);
 }
