@@ -21,6 +21,10 @@ void initMicro()
   // Set the watchdog to give an interrupt
   WDTCSR |= _BV(WDIE);
   
+  EIMSK = _BV(INT0) | _BV(INT1);
+  // Read on falling edges
+  EICRA = _BV(ISC11) | _BV(ISC01);
+  
   // Enable the interrupts again  
   SREG |= _BV(SREG_I);	
 }

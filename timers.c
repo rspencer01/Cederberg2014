@@ -41,13 +41,21 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    if (readPushButton(0))
-      count++;
     writeNumber(count);
   }
 }
 
 ISR(WDT_vect)
 {
-    count++;
+  count+=10;
+}
+
+ISR(INT0_vect)
+{
+  count++;
+}  
+
+ISR(INT1_vect)
+{
+  count--;
 }
