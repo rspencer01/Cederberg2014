@@ -26,6 +26,7 @@ void initMicro()
   EIMSK = _BV(INT0) | _BV(INT1);
   // Read on all edges
   EICRA = _BV(ISC10) | _BV(ISC00);  
+  
   // Set the sleep mode to "power-down"
   SMCR = _BV(SM1);
   

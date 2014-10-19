@@ -9,4 +9,6 @@
 #ifndef THERMOMETER_H_
 #define THERMOMETER_H_
 
+extern volatile char goToSleep;
+
 #endif /* COMPASS_H_ */

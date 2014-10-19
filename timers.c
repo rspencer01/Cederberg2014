@@ -48,7 +48,7 @@ ISR(TIMER0_COMPA_vect)
       // Go to sleep if we need to
       alive--;
       if (alive==0)
-        sleep();
+        goToSleep = 1;
     }
   }
 }
@@ -56,7 +56,7 @@ ISR(TIMER0_COMPA_vect)
 ISR(WDT_vect)
 {
   // Just go to sleep immediately.
-  sleep();
+  goToSleep = 1;
 }
 
 ISR(INT0_vect)
@@ -65,7 +65,9 @@ ISR(INT0_vect)
   // edges (by default they are triggered as long as the
   // pin is held low, which might be for a while).
   // This will be changed back in sleep()
+  SREG &= ~_BV(SREG_I);
   EICRA = _BV(ISC10) | _BV(ISC00);  
+  SREG |= _BV(SREG_I);
   // Write a dummy number out
   writeNumber(readOutdoor());
   // Stay alive for 3 seconds
@@ -78,7 +80,9 @@ ISR(INT1_vect)
   // edges (by default they are triggered as long as the
   // pin is held low, which might be for a while).
   // This will be changed back in sleep()
-  EICRA = _BV(ISC10) | _BV(ISC00);  
+  SREG &= ~_BV(SREG_I);
+  EICRA = _BV(ISC10) | _BV(ISC00);
+  SREG |= _BV(SREG_I);
   // Write a dummy number out
   writeNumber(readIndoor());
   // Stay alive for 3 seconds 

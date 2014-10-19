@@ -10,14 +10,23 @@
 #include "timers.h"
 #include "gpio.h"
 
+volatile char goToSleep=0;
+
 int main(void)
 {
   // Initialise all the things.
   initMicro();
   initPorts();
   initTimers();
-  // Go to sleep
-  sleep();
+  
+  goToSleep = 1;
   // Loop forever
-  while(1);
+  while(1)
+  {
+    if (goToSleep)
+    {
+      goToSleep = 0;
+      sleep();    
+    }
+  }
 }
