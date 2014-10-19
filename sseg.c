@@ -56,3 +56,9 @@ void writeNumber(int n)
   n/=10;
   displays[2] = SSEG_NUMBERS[n%10];
 }
+
+void clearDisplay()
+{
+  SSEG_SELECT_PORT &= ~ SSEG_SELECT_MASK;  
+  setPorts();
+}

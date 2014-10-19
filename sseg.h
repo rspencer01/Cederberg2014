@@ -42,4 +42,7 @@ void updateDisplay();
 // Writes a number to the displays
 void writeNumber(int);
 
+// Clears the display so it shows nothing
+void clearDisplay();
+
 #endif /* SSEG_H_ */
