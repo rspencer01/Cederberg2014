@@ -14,8 +14,14 @@ void initMicro()
   
   // Clear these bits, in this order, on startup/restart, as advised in datasheet (pg51)
   MCUSR &= ~_BV(WDRF);
-  WDTCSR &= ~_BV(WDE);
+  // Set the timer bits that let us change things
+  WDTCSR |= _BV(WDCE) | _BV(WDE);
+  // Quickly!  Within 4 clock cycles we must set up the watchdog
+  WDTCSR = _BV(WDIE) | _BV(WDP3) | _BV(WDP0);  
+  // Set the watchdog to give an interrupt
+  WDTCSR |= _BV(WDIE);
   
+  // Enable the interrupts again  
   SREG |= _BV(SREG_I);	
 }
 

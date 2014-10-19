@@ -8,12 +8,12 @@
 #include <avr/interrupt.h>
 #include "sseg.h"
 #include "timers.h"
-#include "devices.h"
 #include "Thermometer.h"
 #include "sseg.h"
 #include "gpio.h"
 
 int timer_4ms_1s;
+int count = 0;
 
 void initTimers()
 {
@@ -41,9 +41,13 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    if (readPushButton(1))
-      writeNumber(1);
-    else
-      writeNumber(0);
+    if (readPushButton(0))
+      count++;
+    writeNumber(count);
   }
+}
+
+ISR(WDT_vect)
+{
+    count++;
 }
