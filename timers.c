@@ -35,27 +35,26 @@ ISR(TIMER0_COMPA_vect)
 {
   // Update the display strobing
   updateDisplay();
-
+    
   timer_4ms_1s--;
   if (timer_4ms_1s==0)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    writeNumber(count);
   }
 }
 
 ISR(WDT_vect)
 {
-  count+=10;
+  writeNumber(0);
 }
 
 ISR(INT0_vect)
 {
-  count++;
+  writeNumber(readOutdoor());
 }  
 
 ISR(INT1_vect)
 {
-  count--;
+  writeNumber(readIndoor());
 }
