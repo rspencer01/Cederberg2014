@@ -16,11 +16,6 @@ int main(void)
   initMicro();
   initPorts();
   initTimers();
-  // Set all ports to zero (all segments active), except one display enable.
-  portB = 0x0;
-  portC = 0x0;
-  portD = 0b00010000;
-  setPorts();
   // Loop forever
   while(1);
 }

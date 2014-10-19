@@ -13,6 +13,7 @@
 #include "sseg.h"
 
 int timer_4ms_1s;
+int count = 0;
 
 void initTimers()
 {
@@ -32,6 +33,7 @@ void initTimers()
 
 ISR(TIMER0_COMPA_vect)
 {
+  // Update the display strobing
   updateDisplay();
 
   timer_4ms_1s--;
@@ -39,6 +41,8 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    // Flash at us
+    // Write a dummy number to the display for testing purposes.
+    count++;
+    writeNumber(count);
   }
 }
