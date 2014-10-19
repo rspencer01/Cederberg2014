@@ -16,6 +16,8 @@ int main(void)
   initMicro();
   initPorts();
   initTimers();
+  // Go to sleep
+  sleep();
   // Loop forever
   while(1);
 }

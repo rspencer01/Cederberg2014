@@ -6,6 +6,7 @@
  */ 
 
 #include <avr/io.h>
+#include "sseg.h"
 
 void initMicro()
 {
@@ -21,9 +22,12 @@ void initMicro()
   // Set the watchdog to give an interrupt
   WDTCSR |= _BV(WDIE);
   
+  // Set the external interrupts
   EIMSK = _BV(INT0) | _BV(INT1);
-  // Read on falling edges
-  EICRA = _BV(ISC11) | _BV(ISC01);
+  // Read on all edges
+  EICRA = _BV(ISC10) | _BV(ISC00);  
+  // Set the sleep mode to "power-down"
+  SMCR = _BV(SM1);
   
   // Enable the interrupts again  
   SREG |= _BV(SREG_I);	
@@ -69,4 +73,21 @@ void initPorts()
 unsigned char setNthBit(unsigned char dest, unsigned char src, int n)
 {
   return dest ^ ( (dest & (1<<n)) ^ (src &(1<<n)) );
+}
+
+void sleep()
+{
+  // Make the screen blank
+  clearDisplay();
+  // Push button interrupts on lows.  This is so that
+  // we actually wake up.  Must be changed in the ISR.
+  // Remember to disable/re-enable interrupts
+  SREG &= ~_BV(SREG_I);
+  EIMSK = _BV(INT0) | _BV(INT1);
+  EICRA = 0;  
+  SREG |= _BV(SREG_I);
+  // Enable sleeping
+  SMCR |= _BV(SE);  
+  // Actually sleep
+  __asm__ __volatile__("sleep");
 }

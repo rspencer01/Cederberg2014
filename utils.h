@@ -14,5 +14,6 @@ void initPorts();
 
 unsigned char setNthBit(unsigned char, unsigned char, int);
 
+void sleep();
 
 #endif /* UTILS_H_ */

@@ -13,7 +13,8 @@
 #include "gpio.h"
 
 int timer_4ms_1s;
-int count = 0;
+// Number of seconds to remain alive before falling asleep again
+int alive = 0;
 
 void initTimers()
 {
@@ -41,20 +42,45 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
+    // Decrease the alive timer
+    if (alive>0)
+    {
+      // Go to sleep if we need to
+      alive--;
+      if (alive==0)
+        sleep();
+    }
   }
 }
 
 ISR(WDT_vect)
 {
-  writeNumber(0);
+  // Just go to sleep immediately.
+  sleep();
 }
 
 ISR(INT0_vect)
 {
+  // Change interrupts to be only on rising and falling
+  // edges (by default they are triggered as long as the
+  // pin is held low, which might be for a while).
+  // This will be changed back in sleep()
+  EICRA = _BV(ISC10) | _BV(ISC00);  
+  // Write a dummy number out
   writeNumber(readOutdoor());
+  // Stay alive for 3 seconds
+  alive = 3;
 }  
 
 ISR(INT1_vect)
 {
+  // Change interrupts to be only on rising and falling
+  // edges (by default they are triggered as long as the
+  // pin is held low, which might be for a while).
+  // This will be changed back in sleep()
+  EICRA = _BV(ISC10) | _BV(ISC00);  
+  // Write a dummy number out
   writeNumber(readIndoor());
+  // Stay alive for 3 seconds 
+  alive = 3;
 }
