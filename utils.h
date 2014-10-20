@@ -9,11 +9,13 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+// Initialises all the flags for the watchdog and interrupts etc
 void initMicro();
-void initPorts();
 
-unsigned char setNthBit(unsigned char, unsigned char, int);
-
+// Sets up interrupts and puts the microcontroller in sleep mode
 void sleep();
+
+// Sets the nth bit of the first argument to the nth bit of the second and returns the result
+unsigned char setNthBit(unsigned char, unsigned char, int);
 
 #endif /* UTILS_H_ */

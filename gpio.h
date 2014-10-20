@@ -19,11 +19,13 @@ extern unsigned char portD;
 // Thus the following pins must be high
 #define PORTD_PULL_UP 0b00001100
 
+// Initialises the ports
+void initPorts();
+
 // Updates all the output ports.
 void setPorts();
 
-// Reads the push button (0 or 1) and returns a non zero
-// char if it is pushed.
+// Reads the push button (0 or 1)
 char readPushButton(int);
 
 #endif /* GPIO_H_ */

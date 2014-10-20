@@ -24,7 +24,7 @@
 // A mask for which pins are sseg select pins
 #define SSEG_SELECT_MASK 0b01010010
 
-// Numbers
+// Representation of the numbers in the above sseg display
 #define SSEG_ZERO  0b11000000
 #define SSEG_ONE   0b11111001
 #define SSEG_TWO   0b10100100

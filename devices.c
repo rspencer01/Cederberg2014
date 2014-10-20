@@ -1,16 +1,21 @@
-/*
- * devices.c
- *
- * Created: 2014/10/19 06:17:11 PM
- *  Author: Robert Spencer
- */ 
+/// \file devices.c
+/// Handles all the devices connected to the microcontroller
+///
+/// In this case this file handles the thermistors, the reading of the
+/// same and the conversion/calibration.
 
-char readIndoor()
+/// Reads the indoor thermometer
+///
+/// Currently a dummy function, returning 123
+unsigned char readIndoor()
 {
   return 123;  
 }
 
-char readOutdoor()
+/// Reads the outdoor thermometer
+///
+/// Currently a dummy function, returning 213
+unsigned char readOutdoor()
 {
   return 213;  
 }

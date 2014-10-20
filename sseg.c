@@ -1,27 +1,36 @@
-/*
- * sseg.c
- *
- * Created: 2014/03/21 12:19:36 PM
- *  Author: Robert
- */ 
+/// \file gpio.c
+/// Handles all the general purpose IO for the device.
+///
+/// Sets up the registers to handle input/output correctly
+/// as well as the writing to the digital ports.
+
 #include "sseg.h"
 #include "gpio.h"
 #include "utils.h"
 
-// The bits for the display select
+/// An array of the pins that activate each of the three displays
 const unsigned char SSEG_SELECT[3] = {0b01000000,0b00010000,0b00000010};
 
-// The numbers
+/// An array consisting of the digits represented in seven segment displays
 const unsigned char SSEG_NUMBERS[10] = {SSEG_ZERO,SSEG_ONE,SSEG_TWO,SSEG_THREE,SSEG_FOUR,SSEG_FIVE,SSEG_SIX,SSEG_SEVEN,SSEG_EIGHT,SSEG_NINE};
 
-// The values in each display
+/// The actual values in each display
 int displays[3] = {0,0,0};
 
-// The currently strobed display number
+/// The currently strobed display number
 int currentDisplay = 0;
 
-// Writes the correct values to the correct ports.  Don't mess with this
-// unless you know exactly what you are doing.
+/// Writes the correct values to the correct ports. 
+/// 
+/// Due to the nature of the circuitry, different seven
+/// segment pins are in different ports, on weirdly
+/// placed pins.
+///
+/// This function performs all the shifting and setting
+/// of bits required, but _does not write the port_.
+///
+/// \warning Don't mess with this unless you know 
+/// exactly what you are doing.
 void writeDisplay(int segmentNumber)
 {
   portB = setNthBit(portB,(displays[segmentNumber] & 0x02) << 5, 6);
@@ -36,7 +45,9 @@ void writeDisplay(int segmentNumber)
   portD = setNthBit(portD,(displays[segmentNumber] & 0x40) << 1, 7);
 }
 
-// Strobes the display.
+/// Strobes the display.
+///
+/// Activates the next display and writes its value out.
 void updateDisplay()
 {
   SSEG_SELECT_PORT &= ~SSEG_SELECT[currentDisplay];
@@ -47,7 +58,10 @@ void updateDisplay()
   setPorts();
 }
 
-// Writes a three digit integer to the display.
+/// Writes a three digit integer to the display.
+///
+/// Any number of more than 3 digits will be truncated
+/// to 3.
 void writeNumber(int n)
 {
   displays[0] = SSEG_NUMBERS[n%10];
@@ -57,6 +71,13 @@ void writeNumber(int n)
   displays[2] = SSEG_NUMBERS[n%10];
 }
 
+/// Switches off the display
+///
+/// Simply turns off all the control lines without changing
+/// the values of the display.
+/// 
+/// To turn the display back on, simply call `updateDisplay`
+/// repeatedly.
 void clearDisplay()
 {
   SSEG_SELECT_PORT &= ~ SSEG_SELECT_MASK;  

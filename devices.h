@@ -9,9 +9,9 @@
 #ifndef DEVICES_H_
 #define DEVICES_H_
 
-char readIndoor();
-char readOutdoor();
-
-
+// Reads the indoor thermometer
+unsigned char readIndoor();
+// Reads the outdoor thermometer
+unsigned char readOutdoor();
 
 #endif /* DEVICES_H_ */

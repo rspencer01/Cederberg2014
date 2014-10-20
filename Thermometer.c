@@ -1,9 +1,5 @@
-/*
- * Compass.c
- *
- * Created: 2014/03/21 10:56:00 AM
- *  Author: Robert Spencer
- */ 
+/// \file Thermometer.c
+/// Handles the main loop of the device
 
 #include "Thermometer.h"
 #include "utils.h"
@@ -12,6 +8,11 @@
 
 volatile char goToSleep=0;
 
+/// The main entry point of the project.
+///
+/// Performs all initialisation and then hangs in an
+/// infinite loop, repeatedly going to sleep when 
+/// requested via the `goToSleep` flag.
 int main(void)
 {
   // Initialise all the things.

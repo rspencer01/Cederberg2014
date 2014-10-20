@@ -5,7 +5,6 @@
  *  Author: Robert Spencer
  */ 
 
-
 #ifndef THERMOMETER_H_
 #define THERMOMETER_H_
 
