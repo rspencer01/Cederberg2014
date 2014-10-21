@@ -95,7 +95,7 @@ char readPushButton(int id)
 /// Performs an ADC and blocks until the result comes in.  Returns
 /// a value from 0 to 1023, where 0 is 0V and 1023 is VCC.
 ///
-/// \todo Write a `delay` function
+/// \todo See why the results are so inaccurate
 int readADC(int id)
 {
   // Drive the thermistors
@@ -103,14 +103,14 @@ int readADC(int id)
   setPorts();
   // Delay a short while to allow capacitors to charge etc.
   /// \todo Is it necessary to delay before an ADC read?
-  for (int i=0;i<5000;i++);
+  delay(20);
       
   // Enable the ADC
   PRR &= ~_BV(PRADC);
   ADCSRA = _BV(ADEN);
   // Input channel select
   /// \todo Which channel is to be selected by parameter
-  ADMUX = _BV(REFS0) | _BV(ADLAR) | _BV(MUX1);
+  ADMUX = _BV(REFS0) | _BV(MUX1);
 
   // Start conversion
   ADCSRA |= _BV(ADSC);
@@ -130,5 +130,5 @@ int readADC(int id)
   portC &= ~THERMISTOR_DRIVE_PINS;
   setPorts();
   
-  return (resultH << 2) | (resultL & 0x03);
+  return ((resultH&0x03) << 7) | (resultL);
 }

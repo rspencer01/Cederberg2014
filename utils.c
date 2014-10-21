@@ -68,3 +68,24 @@ unsigned char setNthBit(unsigned char dest, unsigned char src, int n)
 {
   return dest ^ ( (dest & (1<<n)) ^ (src &(1<<n)) );
 }
+
+/// Delays for a given number of milliseconds
+/// 
+/// Simply enters a loop for a calculated number of iterations to 
+/// block for the desired time.
+/// 
+/// \note This function is very approximate and is only correct
+///       to within an order of magnitude.  Higher precision timing
+///       should be done with the `timer0` interrupts.
+int delay(int ms)
+{ 
+  unsigned int n;
+  
+  while (ms!=0)
+  {
+    // Gotten from some old code for a 4MHz processor and doubled
+    n = 495;
+    while (--n);
+    --ms;
+  }
+}
