@@ -93,9 +93,7 @@ char readPushButton(int id)
 /// Reads either the indoor or the outdoor thermistor voltages
 ///
 /// Performs an ADC and blocks until the result comes in.  Returns
-/// a value from 0 to 256, where 0 is 0V and 256 is VCC.
-///
-/// \todo Change precision to 10 bits
+/// a value from 0 to 1023, where 0 is 0V and 1023 is VCC.
 ///
 /// \todo Write a `delay` function
 int readADC(int id)
@@ -120,7 +118,8 @@ int readADC(int id)
   // Block until the conversion is complete
   while (ADCSRA & _BV(ADSC));
       
-  // Result only 8 bits precision
+  // Result all 10 bits, Low then High as per the datasheet
+  unsigned char resultL = ADCL;
   unsigned char resultH = ADCH;
       
   // Disable the ADC
@@ -131,5 +130,5 @@ int readADC(int id)
   portC &= ~THERMISTOR_DRIVE_PINS;
   setPorts();
   
-  return resultH;
+  return (resultH << 2) | (resultL & 0x03);
 }
