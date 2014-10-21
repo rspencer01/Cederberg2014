@@ -10,8 +10,8 @@
 #define DEVICES_H_
 
 // Reads the indoor thermometer
-unsigned char readIndoor();
+int readIndoor();
 // Reads the outdoor thermometer
-unsigned char readOutdoor();
+int readOutdoor();
 
 #endif /* DEVICES_H_ */

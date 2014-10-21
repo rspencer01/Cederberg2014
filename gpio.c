@@ -8,11 +8,11 @@
 #include "gpio.h"
 
 /// Internal buffer for port B
-unsigned char portB;
+unsigned char portB = 0;
 /// Internal buffer for port C
-unsigned char portC;
+unsigned char portC = 0;
 /// Internal buffer for port D
-unsigned char portD;
+unsigned char portD = 0;
 
 /// Initialises the input/output of all the ports
 ///
@@ -59,7 +59,7 @@ void initPorts()
 {
   DDRB = 0b11111111;
   
-  DDRC = 0b1110000;
+  DDRC = 0b01110000;
   
   DDRD = 0b11110011;
 }
@@ -72,6 +72,8 @@ void initPorts()
 ///
 /// In addition, this allows us to keep the pull up resistors on the
 /// push buttons by masking `PORTD`.
+///
+/// \todo Mask other ports that may need it.
 void setPorts()
 {
   PORTB = portB;
@@ -86,4 +88,48 @@ void setPorts()
 char readPushButton(int id)
 {
   return (PIND & (0x08 >> id) ) ^ (0x08 >> id);
+}
+
+/// Reads either the indoor or the outdoor thermistor voltages
+///
+/// Performs an ADC and blocks until the result comes in.  Returns
+/// a value from 0 to 256, where 0 is 0V and 256 is VCC.
+///
+/// \todo Change precision to 10 bits
+///
+/// \todo Write a `delay` function
+int readADC(int id)
+{
+  // Drive the thermistors
+  portC |= THERMISTOR_DRIVE_PINS;
+  setPorts();
+  // Delay a short while to allow capacitors to charge etc.
+  /// \todo Is it necessary to delay before an ADC read?
+  for (int i=0;i<5000;i++);
+      
+  // Enable the ADC
+  PRR &= ~_BV(PRADC);
+  ADCSRA = _BV(ADEN);
+  // Input channel select
+  /// \todo Which channel is to be selected by parameter
+  ADMUX = _BV(REFS0) | _BV(ADLAR) | _BV(MUX1);
+
+  // Start conversion
+  ADCSRA |= _BV(ADSC);
+      
+  // Block until the conversion is complete
+  while (ADCSRA & _BV(ADSC));
+      
+  // Result only 8 bits precision
+  unsigned char resultH = ADCH;
+      
+  // Disable the ADC
+  ADCSRA &= ~_BV(ADEN);
+  PRR |= _BV(PRADC);
+  
+  // Stop driving thermistors
+  portC &= ~THERMISTOR_DRIVE_PINS;
+  setPorts();
+  
+  return resultH;
 }

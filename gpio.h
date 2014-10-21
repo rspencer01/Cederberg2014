@@ -19,6 +19,9 @@ extern unsigned char portD;
 // Thus the following pins must be high
 #define PORTD_PULL_UP 0b00001100
 
+// The pins that drive the thermistors
+#define THERMISTOR_DRIVE_PINS 0b00001100
+
 // Initialises the ports
 void initPorts();
 
@@ -28,4 +31,6 @@ void setPorts();
 // Reads the push button (0 or 1)
 char readPushButton(int);
 
+// Reads the ADC on ADC0 or ADC1
+int readADC(int);
 #endif /* GPIO_H_ */

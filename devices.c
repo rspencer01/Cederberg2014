@@ -3,19 +3,20 @@
 ///
 /// In this case this file handles the thermistors, the reading of the
 /// same and the conversion/calibration.
+#include "gpio.h"
 
 /// Reads the indoor thermometer
 ///
 /// Currently a dummy function, returning 123
-unsigned char readIndoor()
+int readIndoor()
 {
   return 123;  
 }
 
 /// Reads the outdoor thermometer
 ///
-/// Currently a dummy function, returning 213
-unsigned char readOutdoor()
+/// Currently reads the ADC and returns that.
+int readOutdoor()
 {
-  return 213;  
+  return readADC(0); 
 }
