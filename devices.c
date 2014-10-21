@@ -5,18 +5,13 @@
 /// same and the conversion/calibration.
 #include "gpio.h"
 
-/// Reads the indoor thermometer
+/// Reads the given thermometer
 ///
-/// Currently a dummy function, returning 123
-int readIndoor()
+/// Currently a dummy function, returning the raw voltage
+/// scaled from 0 to 255.
+/// 
+/// \todo Do all calculations for temperature
+int readThermometer(int thermometer)
 {
-  return 123;  
-}
-
-/// Reads the outdoor thermometer
-///
-/// Currently reads the ADC and returns that.
-int readOutdoor()
-{
-  return readADC(0); 
+  return readADC(thermometer);  
 }

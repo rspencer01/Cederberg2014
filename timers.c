@@ -10,6 +10,7 @@
 #include "timers.h"
 #include "Thermometer.h"
 #include "sseg.h"
+#include "devices.h"
 #include "gpio.h"
 
 /// A countdown to divide the 4ms timer into 1s
@@ -87,7 +88,7 @@ ISR(INT0_vect)
   EIMSK = _BV(INT1);
   
   // Write a dummy number out
-  writeNumber(readOutdoor());
+  writeNumber(readThermometer(INDOOR_THERMOMETER));
   
   // Stay alive for 3 seconds
   alive = 3;
@@ -108,7 +109,7 @@ ISR(INT1_vect)
   EIMSK = _BV(INT0);
   
   // Write a dummy number out
-  writeNumber(readIndoor());
+  writeNumber(readThermometer(OUTDOOR_THERMOMETER));
   
   // Stay alive for 3 seconds 
   alive = 3;

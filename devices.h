@@ -9,9 +9,10 @@
 #ifndef DEVICES_H_
 #define DEVICES_H_
 
-// Reads the indoor thermometer
-int readIndoor();
-// Reads the outdoor thermometer
-int readOutdoor();
+#define INDOOR_THERMOMETER 0
+#define OUTDOOR_THERMOMETER 1
+
+// Reads the given thermometer
+int readThermometer(int);
 
 #endif /* DEVICES_H_ */
