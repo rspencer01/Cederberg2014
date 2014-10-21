@@ -17,7 +17,8 @@ extern unsigned char portD;
 
 // The push buttons must have pull up resistors activated.
 // Thus the following pins must be high
-#define PORTD_PULL_UP 0b00001100
+#define PORTD_PULL_UP    0b00001100
+#define PORTC_NO_PULL_UP 0b11111100
 
 // The pins that drive the thermistors
 #define THERMISTOR_DRIVE_PINS 0b00001100

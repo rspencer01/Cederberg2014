@@ -71,13 +71,11 @@ void initPorts()
 /// sensitive on the circuitry).
 ///
 /// In addition, this allows us to keep the pull up resistors on the
-/// push buttons by masking `PORTD`.
-///
-/// \todo Mask other ports that may need it.
+/// push buttons by masking `PORTD`, and disabling them on `PORTC`.
 void setPorts()
 {
   PORTB = portB;
-  PORTC = portC;
+  PORTC = portC & PORTC_NO_PULL_UP;
   PORTD = portD | PORTD_PULL_UP;
 }
 
@@ -102,7 +100,7 @@ int readADC(int id)
   portC |= THERMISTOR_DRIVE_PINS;
   setPorts();
   // Delay a short while to allow capacitors to charge etc.
-  /// \todo Is it necessary to delay before an ADC read?
+  /// \todo Check this delay against actual thermistors
   delay(20);
       
   // Enable the ADC
