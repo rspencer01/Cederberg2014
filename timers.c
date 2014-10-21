@@ -80,18 +80,15 @@ ISR(WDT_vect)
 /// the interrupt enable flag is set.
 /// 
 /// Thus the interrupt is immediately changed to only trigger on the
-/// rising or falling edge.  When we go to sleep, we will change it back.
+/// other pushbutton.  When we go to sleep, we will enable both.
 ISR(INT0_vect)
 {
-  // Change interrupts to be only on rising and falling
-  // edges (by default they are triggered as long as the
-  // pin is held low, which might be for a while).
-  // This will be changed back in sleep()
-  SREG &= ~_BV(SREG_I);
-  EICRA = _BV(ISC10) | _BV(ISC00);  
-  SREG |= _BV(SREG_I);
+  // Change interrupts to be only on other pushbutton
+  EIMSK = _BV(INT1);
+  
   // Write a dummy number out
   writeNumber(readOutdoor());
+  
   // Stay alive for 3 seconds
   alive = 3;
 }  
@@ -104,18 +101,15 @@ ISR(INT0_vect)
 /// the interrupt enable flag is set.
 ///
 /// Thus the interrupt is immediately changed to only trigger on the
-/// rising or falling edge.  When we go to sleep, we will change it back.
+/// other pushbutton.  When we go to sleep, we will enable both.
 ISR(INT1_vect)
 {
-  // Change interrupts to be only on rising and falling
-  // edges (by default they are triggered as long as the
-  // pin is held low, which might be for a while).
-  // This will be changed back in sleep()
-  SREG &= ~_BV(SREG_I);
-  EICRA = _BV(ISC10) | _BV(ISC00);
-  SREG |= _BV(SREG_I);
+  // Change interrupts to be only on other pushbutton
+  EIMSK = _BV(INT0);
+  
   // Write a dummy number out
   writeNumber(readIndoor());
+  
   // Stay alive for 3 seconds 
   alive = 3;
 }

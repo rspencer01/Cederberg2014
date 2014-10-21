@@ -26,6 +26,13 @@ int main(void)
   {
     if (goToSleep)
     {
+      // If either push button is down, don't go to sleep!  This is
+      // because we wake on a pushbutton low, via an interrupt, and
+      // setting interrupts will immediately vector there.
+      //
+      // Do this here because we will want to try again.
+      if (readPushButton(0) || readPushButton(1))
+        continue;
       goToSleep = 0;
       sleep();    
     }
