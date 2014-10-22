@@ -17,6 +17,10 @@ extern unsigned char portB;
 extern unsigned char portC;
 extern unsigned char portD;
 
+// Codes for pushbuttons
+#define INDOOR_PUSHBUTTON 0
+#define OUTDOOR_PUSHBUTTON 1
+
 // The push buttons must have pull up resistors activated.
 // Thus the following pins must be high
 #define PORTD_PULL_UP    0b00001100
