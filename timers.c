@@ -69,8 +69,9 @@ ISR(TIMER0_COMPA_vect)
 /// Will eventually measure max/mins.
 ISR(WDT_vect)
 {
-  // Just go to sleep immediately.
-  goToSleep = 1;
+  // Just go to sleep immediately, if the timer won't do it
+  if (alive==0)
+    goToSleep = 1;
 }
 
 /// The INT0 vector
