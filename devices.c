@@ -13,5 +13,8 @@
 /// \todo Do all calculations for temperature
 int readThermometer(int thermometer)
 {
-  return readADC(thermometer);  
+  int actual = readADC(ADC_CHANNEL_OUTDOOR);  
+  int reference = readADC(ADC_CHANNEL_REFERENCE);
+  long long calc = ((long long)actual * 1024) / reference;
+  return (int) calc;
 }

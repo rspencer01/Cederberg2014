@@ -25,8 +25,9 @@ extern unsigned char portD;
 // The pins that drive the thermistors
 #define THERMISTOR_DRIVE_PIN 0b00001000
 
-#define ADC_CHANNEL_OUTDOOR 0
-#define ADC_CHANNEL_INDOOR _BV(MUX0)
+// The ADC channel selects
+#define ADC_CHANNEL_OUTDOOR   0
+#define ADC_CHANNEL_INDOOR    _BV(MUX0)
 #define ADC_CHANNEL_REFERENCE _BV(MUX1)
 
 // Initialises the ports
