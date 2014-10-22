@@ -37,7 +37,7 @@ unsigned char portD = 0;
 /// |:---------:|:---------------------:|:----:|
 /// |`0`        | Outdoor Thermometer   | `I`  |
 /// |`1`        | Indoor Thermometer    | `I`  |
-/// |`2`        | Thermometer Drive     | `O`  |
+/// |`2`        | Thermometer Max Read  | `I`  |
 /// |`3`        | Thermometer Drive     | `O`  |
 /// |`4`        | `SSEG 7`              | `O`  |
 /// |`5`        | `SSEG 5`              | `O`  |
@@ -48,18 +48,18 @@ unsigned char portD = 0;
 /// |Pin Number | Usage              | I/O  |
 /// |:---------:|:------------------:|:----:|
 /// |`0`        | `SSEG 0`           | `O`  |
-/// |`1`        | `SSEG SELECT 0`    |      |
+/// |`1`        | `SSEG SELECT 0`    | `O`  |
 /// |`2`        | Outdoor Pushbutton |      |
 /// |`3`        | Indoor Pushbutton  |      |
-/// |`4`        | `SSEG SELECT 1`    |      |
-/// |`5`        | `SSEG 3`           |      |
+/// |`4`        | `SSEG SELECT 1`    | `O`  |
+/// |`5`        | `SSEG 3`           | `O`  |
 /// |`6`        | `SSEG SELECT 0`    | `O`  |
 /// |`7`        | `SSEG 6`           | `O`  |
 void initPorts()
 {
   DDRB = 0b11111111;
   
-  DDRC = 0b01110000;
+  DDRC = 0b11111000;
   
   DDRD = 0b11110011;
 }
@@ -94,10 +94,12 @@ char readPushButton(int id)
 /// a value from 0 to 1023, where 0 is 0V and 1023 is VCC.
 ///
 /// \todo See why the results are so inaccurate
-int readADC(int id)
+int readADC(int channel)
 {
+  // The maximum value.  Read off ADC2
+  int max;
   // Drive the thermistors
-  portC |= THERMISTOR_DRIVE_PINS;
+  portC |= THERMISTOR_DRIVE_PIN;
   setPorts();
   // Delay a short while to allow capacitors to charge etc.
   /// \todo Check this delay against actual thermistors
@@ -107,8 +109,7 @@ int readADC(int id)
   PRR &= ~_BV(PRADC);
   ADCSRA = _BV(ADEN);
   // Input channel select
-  /// \todo Which channel is to be selected by parameter
-  ADMUX = _BV(REFS0) | _BV(MUX1);
+  ADMUX = _BV(REFS0) | channel;
 
   // Start conversion
   ADCSRA |= _BV(ADSC);
@@ -125,8 +126,8 @@ int readADC(int id)
   PRR |= _BV(PRADC);
   
   // Stop driving thermistors
-  portC &= ~THERMISTOR_DRIVE_PINS;
+  portC &= ~THERMISTOR_DRIVE_PIN;
   setPorts();
   
-  return ((resultH&0x03) << 7) | (resultL);
+  return ((resultH&0x03) <<8) + resultL;
 }
