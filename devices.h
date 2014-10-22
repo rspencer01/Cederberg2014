@@ -15,9 +15,16 @@
 // Reads the given thermometer
 int readThermometer(int);
 
+// Clears the minimum and maximums
+void resetMinMax();
+
+// The min outdoor temperature
 extern int outdoorLow;
+// The max outdoor temperature
 extern int outdoorHigh;
+// The min indoor temperature
 extern int indoorLow;
+// The max indoor temperature
 extern int indoorHigh;
 
 #endif /* DEVICES_H_ */

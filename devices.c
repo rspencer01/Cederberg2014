@@ -8,15 +8,29 @@
 #include "utils.h"
 
 /// The low of the outdoor thermometer
-int outdoorLow = 999;
+int outdoorLow;
 /// The high of the outdoor thermometer
-int outdoorHigh = 0;
+int outdoorHigh;
 
 /// The low of the indoor thermometer
-int indoorLow = 999;
+int indoorLow;
 /// The high of the indoor thermometer
-/// \todo Make this initially some negative value
-int indoorHigh = 0;
+int indoorHigh;
+
+/// Resets the minima and maxima
+///
+/// Sets the minima to some large value and the maxima to a small
+/// value, and reads the thermometers in order to set them to their
+/// actual value.
+/// 
+/// \todo Make the high values initially negative
+void resetMinMax()
+{
+  outdoorLow = indoorLow = 999;
+  outdoorHigh = indoorHigh = 0;
+  readThermometer(INDOOR_THERMOMETER);
+  readThermometer(OUTDOOR_THERMOMETER);
+}
 
 /// Reads the given thermometer
 ///
@@ -34,12 +48,12 @@ int readThermometer(int thermometer)
   if (thermometer == INDOOR_THERMOMETER)
   {
     indoorLow  = min(indoorLow,(int)calc);
-    indoorHigh = max(indoorLow,(int)calc);
+    indoorHigh = max(indoorHigh,(int)calc);
   }
   if (thermometer == OUTDOOR_THERMOMETER)
   {
     outdoorLow  = min(outdoorLow,(int)calc);
-    outdoorHigh = max(outdoorLow,(int)calc);
+    outdoorHigh = max(outdoorHigh,(int)calc);
   }  
   
   return (int) calc;

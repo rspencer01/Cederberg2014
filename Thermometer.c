@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "timers.h"
 #include "gpio.h"
+#include "devices.h"
 
 volatile char goToSleep=0;
 
@@ -19,6 +20,8 @@ int main(void)
   initMicro();
   initPorts();
   initTimers();
+  // Reset the thermometer
+  resetMinMax();
   
   goToSleep = 1;
   // Loop forever
