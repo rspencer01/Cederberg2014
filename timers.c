@@ -15,10 +15,10 @@
 
 /// A countdown to divide the 4ms timer into 1s
 int timer_4ms_1s;
-/// Number of seconds to remain alive before falling asleep again
-int alive = 0;
 /// A counter for the watchdog to read the thermometers.
 int watchdogCount=INI_8S_64S;
+/// Which pushbutton was pushed last?
+int lastPushButton;
 
 /// Initialises the timer module.
 ///
@@ -54,14 +54,8 @@ ISR(TIMER0_COMPA_vect)
   {
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
-    // Decrease the alive timer
-    if (alive>0)
-    {
-      // Go to sleep if we need to
-      alive--;
-      if (alive==0)
-        goToSleep = 1;
-    }
+    // Update displays etc
+    setState(); 
   }
 }
 
@@ -104,8 +98,10 @@ ISR(INT0_vect)
   EIMSK = _BV(INT1);
   
   // Write out the thermometer value
-  writeNumber(readThermometer(INDOOR_THERMOMETER));
+  state = STATE_INDOOR_DISPLAY;
   
+  // Who are we?
+  lastPushButton = INDOOR_PUSHBUTTON;
   // Stay alive for 3 seconds
   alive = 3;
 }  
@@ -125,8 +121,10 @@ ISR(INT1_vect)
   EIMSK = _BV(INT0);
   
   // Write out the thermometer value
-  writeNumber(readThermometer(OUTDOOR_THERMOMETER));
+  state = STATE_OUTDOOR_DISPLAY;
   
+  // Who are we?
+  lastPushButton = OUTDOOR_PUSHBUTTON;
   // Stay alive for 3 seconds 
   alive = 3;
 }
