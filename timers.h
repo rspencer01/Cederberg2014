@@ -11,6 +11,8 @@
 
 // Scalar to change 4ms to 1 second
 #define INI_4MS_1S 250
+// Scalar to change watchdog 8s to 64s
+#define INI_8S_64S 8
 
 // Sets up all the timer stuff
 void initTimers();

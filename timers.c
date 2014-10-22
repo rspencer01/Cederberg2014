@@ -17,6 +17,8 @@
 int timer_4ms_1s;
 /// Number of seconds to remain alive before falling asleep again
 int alive = 0;
+/// A counter for the watchdog to read the thermometers.
+int watchdogCount=INI_8S_64S;
 
 /// Initialises the timer module.
 ///
@@ -66,9 +68,22 @@ ISR(TIMER0_COMPA_vect)
 /// The watchdog interrupt vector
 ///
 /// Called whenever the watchdog times out (once every 8s)
-/// Will eventually measure max/mins.
+/// Reads the thermometers in order to keep a minimum/maximum
+/// that is updated every 64s.
+///
+/// \todo Test that the reading actually works.
 ISR(WDT_vect)
 {
+  watchdogCount--;
+  if (watchdogCount==0)
+  {
+    // Simply read the temperatures.  This will update min/max
+    // automatically.
+    readThermometer(INDOOR_THERMOMETER);
+    readThermometer(OUTDOOR_THERMOMETER);
+    // Reset the counter
+    watchdogCount = INI_8S_64S;    
+  }
   // Just go to sleep immediately, if the timer won't do it
   if (alive==0)
     goToSleep = 1;
