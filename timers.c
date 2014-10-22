@@ -79,7 +79,7 @@ ISR(WDT_vect)
     watchdogCount = INI_8S_64S;    
   }
   // Just go to sleep immediately, if the timer won't do it
-  if (alive==0)
+  if (state==STATE_SLEEP)
     goToSleep = 1;
 }
 
@@ -98,12 +98,12 @@ ISR(INT0_vect)
   EIMSK = _BV(INT1);
   
   // Write out the thermometer value
+  writeNumber(readThermometer(INDOOR_THERMOMETER));
   state = STATE_INDOOR_DISPLAY;
+  stateChangeTics = 2;
   
   // Who are we?
   lastPushButton = INDOOR_PUSHBUTTON;
-  // Stay alive for 3 seconds
-  alive = 3;
 }  
 
 /// The INT1 vector
@@ -121,10 +121,10 @@ ISR(INT1_vect)
   EIMSK = _BV(INT0);
   
   // Write out the thermometer value
+  writeNumber(readThermometer(OUTDOOR_THERMOMETER));
   state = STATE_OUTDOOR_DISPLAY;
+  stateChangeTics = 2;
   
   // Who are we?
   lastPushButton = OUTDOOR_PUSHBUTTON;
-  // Stay alive for 3 seconds 
-  alive = 3;
 }

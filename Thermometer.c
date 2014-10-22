@@ -5,13 +5,14 @@
 #include "utils.h"
 #include "timers.h"
 #include "gpio.h"
+#include "sseg.h"
 #include "devices.h"
 
 /// The current state of the system
 int state;
 
-/// Number of state ticks for which to remain alive before falling asleep
-int alive =0;
+/// The number of timer ticks until the next state change
+unsigned int stateChangeTics;
 
 /// Set to 1 when the main loop is to put the microcontroller to sleep
 volatile char goToSleep=0;
@@ -52,25 +53,95 @@ int main(void)
 /// Sets the display and updates the state
 /// 
 /// This function is to be called every second from the timer.
-/// It displays things like min/max and temperatures.
+/// It displays things like min/max and temperatures, and advances
+/// us through the display cycles.
 /// 
 /// \todo This function is very time heavy.  Don't call it from ISR.
 /// 
 /// \todo Call this something else.  This name is not clear
 void setState()
 {
-  // Check if we should be going to sleep
-  if (alive==0)
+  if (stateChangeTics == 0)
   {
-    goToSleep = 1;
-    return;
-  }     
-  // Decrease our alive counter
-  alive--;
-  
-  // Check the states and do the right thing.
-  if (state==STATE_INDOOR_DISPLAY)
-    writeNumber(readThermometer(INDOOR_THERMOMETER));
-  if (state==STATE_OUTDOOR_DISPLAY)
-    writeNumber(readThermometer(OUTDOOR_THERMOMETER));
+    if (state & STATE_DISPLAY_MIN)
+    {
+      writeMessage(SSEG_MSG_LO);
+      state &= ~STATE_DISPLAY_MIN;
+      stateChangeTics = 1;
+      return;
+    }
+    if (state & STATE_DISPLAY_MAX)
+    {
+      writeMessage(SSEG_MSG_HI);
+      state &= ~STATE_DISPLAY_MAX;
+      stateChangeTics = 1;
+      return;
+    }    
+    switch (state)
+    {
+      case STATE_SLEEP:
+      {
+        goToSleep = 1;
+        break;
+      }
+      case STATE_INDOOR_DISPLAY:
+      case STATE_OUTDOOR_DISPLAY:
+      {
+        if (readPushButton(INDOOR_PUSHBUTTON))
+        {
+          state = STATE_INDOOR_MIN_WORD;
+          stateChangeTics = 1;
+        }          
+        else
+        {
+          if (readPushButton(OUTDOOR_PUSHBUTTON))
+          {
+            state = STATE_OUTDOOR_MIN_WORD;
+            stateChangeTics = 1;
+          }
+          else
+          {
+            state=STATE_SLEEP;
+            goToSleep = 1;
+          }
+        }          
+        break;
+      }
+      case STATE_INDOOR_MIN_DISPLAY:
+      {
+        writeNumber(1);
+        state = STATE_INDOOR_MAX_WORD;
+        stateChangeTics = 2;
+        break; 
+      }
+      case STATE_OUTDOOR_MIN_DISPLAY:
+      {
+        writeNumber(2);
+        state = STATE_OUTDOOR_MAX_WORD;
+        stateChangeTics = 2;
+        break;
+      }
+      case STATE_INDOOR_MAX_DISPLAY:
+      {
+        writeNumber(3);
+        state = STATE_SLEEP;
+        stateChangeTics = 2;
+        break;
+      }
+      case STATE_OUTDOOR_MAX_DISPLAY:
+      {
+        writeNumber(4);
+        state = STATE_SLEEP;
+        stateChangeTics = 2;
+        break;
+      }      
+      default:
+      {
+        state=STATE_SLEEP;
+        goToSleep = 1;
+      }        
+    }      
+  }
+  else
+    stateChangeTics --;
 }   
