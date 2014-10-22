@@ -36,11 +36,27 @@
 #define SSEG_EIGHT 0b10000000
 #define SSEG_NINE  0b10010000
 
+// Representation of some letters
+#define SSEG_R 0b10101111
+#define SSEG_C 0b11000110
+#define SSEG_L 0b11000111
+#define SSEG_H 0b10001001
+#define SSEG_O 0b10100011
+#define SSEG_I 0b11101111
+
+// Some messages that will be used
+#define SSEG_MSG_CLR 0
+#define SSEG_MSG_HI  1
+#define SSEG_MSG_LO  2
+
 // Performs the strobing
 void updateDisplay();
 
 // Writes a number to the displays
 void writeNumber(int);
+
+// Writes a message to the displays
+void writeMessage(int msg);
 
 // Clears the display so it shows nothing
 void clearDisplay();

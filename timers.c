@@ -88,7 +88,7 @@ ISR(INT0_vect)
   // Change interrupts to be only on other pushbutton
   EIMSK = _BV(INT1);
   
-  // Write a dummy number out
+  // Write out the thermometer value
   writeNumber(readThermometer(INDOOR_THERMOMETER));
   
   // Stay alive for 3 seconds
@@ -109,7 +109,7 @@ ISR(INT1_vect)
   // Change interrupts to be only on other pushbutton
   EIMSK = _BV(INT0);
   
-  // Write a dummy number out
+  // Write out the thermometer value
   writeNumber(readThermometer(OUTDOOR_THERMOMETER));
   
   // Stay alive for 3 seconds 

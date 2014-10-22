@@ -28,6 +28,8 @@ int currentDisplay = 0;
 ///
 /// This function performs all the shifting and setting
 /// of bits required, but _does not write the port_.
+/// setPorts must be called after this if the value is to
+/// actually be displayed.
 ///
 /// \warning Don't mess with this unless you know 
 /// exactly what you are doing.
@@ -69,6 +71,31 @@ void writeNumber(int n)
   displays[1] = SSEG_NUMBERS[n%10];
   n/=10;
   displays[2] = SSEG_NUMBERS[n%10];
+}
+
+/// Writes a message to the display.
+/// 
+/// Writes either `CLR`, `HI` or `LO` to the display.
+void writeMessage(int msg)
+{
+  if (msg==SSEG_MSG_CLR)
+  {
+    displays[2] = SSEG_C;
+    displays[1] = SSEG_L;
+    displays[0] = SSEG_R;
+  }
+  if (msg==SSEG_MSG_HI)
+  {
+    displays[2] = 0xFF;
+    displays[1] = SSEG_H;
+    displays[0] = SSEG_I;
+  }
+  if (msg==SSEG_MSG_LO)
+  {
+    displays[2] = 0xFF;
+    displays[1] = SSEG_L;
+    displays[0] = SSEG_O;
+  }
 }
 
 /// Switches off the display
