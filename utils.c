@@ -77,7 +77,7 @@ unsigned char setNthBit(unsigned char dest, unsigned char src, int n)
 /// \note This function is very approximate and is only correct
 ///       to within an order of magnitude.  Higher precision timing
 ///       should be done with the `timer0` interrupts.
-int delay(int ms)
+void delay(int ms)
 { 
   unsigned int n;
   

@@ -9,6 +9,11 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+// Typical minimum
+#define min(_a,_b) (_a)<(_b)?(_a):(_b)
+// Typical maximum
+#define max(_a,_b) (_a)>(_b)?(_a):(_b)
+
 // Initialises all the flags for the watchdog and interrupts etc
 void initMicro();
 

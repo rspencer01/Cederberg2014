@@ -15,4 +15,9 @@
 // Reads the given thermometer
 int readThermometer(int);
 
+extern int outdoorLow;
+extern int outdoorHigh;
+extern int indoorLow;
+extern int indoorHigh;
+
 #endif /* DEVICES_H_ */
