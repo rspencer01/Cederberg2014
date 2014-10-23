@@ -64,10 +64,10 @@ ISR(TIMER0_COMPA_vect)
 /// that is updated every 64s.
 ///
 /// \todo Test that the reading actually works.
-///
-/// \todo Disable during alive periods, as then it causes flickering
 ISR(WDT_vect)
 {
+  if (state!=STATE_SLEEP)
+    return;
   watchdogCount--;
   if (watchdogCount==0)
   {
