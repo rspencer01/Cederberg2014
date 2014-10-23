@@ -17,8 +17,6 @@
 int timer_4ms_1s;
 /// A counter for the watchdog to read the thermometers.
 int watchdogCount=INI_8S_64S;
-/// Which pushbutton was pushed last?
-int lastPushButton;
 
 /// Initialises the timer module.
 ///
@@ -66,6 +64,8 @@ ISR(TIMER0_COMPA_vect)
 /// that is updated every 64s.
 ///
 /// \todo Test that the reading actually works.
+///
+/// \todo Disable during alive periods, as then it causes flickering
 ISR(WDT_vect)
 {
   watchdogCount--;
@@ -88,22 +88,23 @@ ISR(WDT_vect)
 /// Called by the depression of pushbutton 1.  In general use
 /// (ie, when sleeping) this is called on a low.  However, this,
 /// if continued, would result in the interrupt firing every time
-/// the interrupt enable flag is set.
-/// 
-/// Thus the interrupt is immediately changed to only trigger on the
-/// other pushbutton.  When we go to sleep, we will enable both.
+/// the interrupt enable flag is set. Thus the interrupt is 
+/// immediately changed to only trigger on falling edges for both
+/// pushbuttons.
 ISR(INT0_vect)
 {
-  // Change interrupts to be only on other pushbutton
-  EIMSK = _BV(INT1);
+  // Change interrupts to be only on falling edges (pushbutton pressed)
+  EICRA = _BV(ISC11) | _BV(ISC01);
   
-  // Write out the thermometer value
-  writeNumber(readThermometer(INDOOR_THERMOMETER));
-  state = STATE_INDOOR_DISPLAY;
-  stateChangeTics = 2;
+  // Set the new state
+  if (state!=STATE_INDOOR_DISPLAY)
+    state = STATE_INDOOR_DISPLAY_PRE;
+  else
+    state = STATE_INDOOR_MIN_WORD;
   
-  // Who are we?
-  lastPushButton = INDOOR_PUSHBUTTON;
+  // Force an immediate change
+  stateChangeTics = 0;   
+  setState();
 }  
 
 /// The INT1 vector
@@ -111,20 +112,21 @@ ISR(INT0_vect)
 /// Called by the depression of pushbutton 2.  In general use
 /// (ie, when sleeping) this is called on a low.  However, this,
 /// if continued, would result in the interrupt firing every time
-/// the interrupt enable flag is set.
-///
-/// Thus the interrupt is immediately changed to only trigger on the
-/// other pushbutton.  When we go to sleep, we will enable both.
+/// the interrupt enable flag is set. Thus the interrupt is
+/// immediately changed to only trigger on falling edges for both
+/// pushbuttons.
 ISR(INT1_vect)
 {
-  // Change interrupts to be only on other pushbutton
-  EIMSK = _BV(INT0);
+  // Change interrupts to be only on falling edges (pushbutton pressed)
+  EICRA = _BV(ISC11) | _BV(ISC01);
   
-  // Write out the thermometer value
-  writeNumber(readThermometer(OUTDOOR_THERMOMETER));
-  state = STATE_OUTDOOR_DISPLAY;
-  stateChangeTics = 2;
+  // Set the new state
+  if (state!=STATE_OUTDOOR_DISPLAY)
+    state = STATE_OUTDOOR_DISPLAY_PRE;
+  else
+    state = STATE_OUTDOOR_MIN_WORD;
   
-  // Who are we?
-  lastPushButton = OUTDOOR_PUSHBUTTON;
+  // Force an immediate change
+  stateChangeTics = 0;
+  setState();
 }
