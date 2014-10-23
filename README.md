@@ -9,7 +9,9 @@ Operation
 ---------
 The human interaction is through three seven segment displays and two push buttons.  The value of `DISP_TIME` is currently undecided, but will probably be about 3 seconds.
 
-Pressing a pushbutton and releasing will result in the relevant temperature for `DISP_TIME` seconds.  If the button is held for `DISP_TIME` seconds, the minimum and then maximum for that thermometer will be displayed.
+Pressing a pushbutton and releasing will result in the relevant temperature for `DISP_TIME` seconds.  If the button is pressed again within that time, the minimum and then maximum for that thermometer will be displayed.  The flow is shown below
+
+<div style="text-align:center;padding:15px"><img alt="Flow of state" src="doc/state_flow.png" width="500px"></div>
 
 Desgin Considerations
 ---------------------
