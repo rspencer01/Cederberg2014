@@ -61,43 +61,69 @@ int main(void)
 /// \todo Call this something else.  This name is not clear
 void setState()
 {
+  // If we are to change something, do so
   if (stateChangeTics == 0)
   {
+    // Special case is either of the states that display Lo.
+    // They have bit structure such that testing for these states
+    // is very easy.
     if (state & STATE_DISPLAY_MIN)
     {
+      // Write out the message
       writeMessage(SSEG_MSG_LO);
+      // Kill the display min bit, leaving the others
       state &= ~STATE_DISPLAY_MIN;
+      // Keep for 1 second
       stateChangeTics = 1;
+      // We are done here
       return;
     }
+    // Similarly for the Hi message
     if (state & STATE_DISPLAY_MAX)
     {
+      // Write out the message
       writeMessage(SSEG_MSG_HI);
+      // Kill the display max bit, leaving the others
       state &= ~STATE_DISPLAY_MAX;
+      // Keep for 1 second
       stateChangeTics = 1;
+      // We are done here
       return;
     }    
+    // Otherwise a switch statement is cleaner
     switch (state)
     {
+      // We are to go to sleep.  Tell the main loop
       case STATE_SLEEP:
       {
         goToSleep = 1;
         break;
       }
+      // Someone (an ISR) has asked us to display the
+      // indoor temperature.
       case STATE_INDOOR_DISPLAY_PRE:
       {
+        // Display the temperature (dummy for now)
         writeNumber(100);
+        // Change the state to say that we have done it.
         state=STATE_INDOOR_DISPLAY;
+        // Keep for 3 seconds
         stateChangeTics = 3;
         break;
       }
+      // ... and the same with the oudoor temperature
       case STATE_OUTDOOR_DISPLAY_PRE:
       {
+        // Display the temperature (dummy for now)
         writeNumber(200);
+        // Change the state to say that we have done it.
         state=STATE_OUTDOOR_DISPLAY;
+        // Keep for 3 seconds
         stateChangeTics = 3;
         break;
       }
+      // If we timeout on either display of timer ticks,
+      // go to sleep
       case STATE_INDOOR_DISPLAY:
       case STATE_OUTDOOR_DISPLAY:
       {
@@ -105,20 +131,28 @@ void setState()
           goToSleep = 1;
           break;
       }
+      // Display the minimum for indoors
       case STATE_INDOOR_MIN_DISPLAY:
       {
+        // Display the minimum (dummy for now)
         writeNumber(1);
+        // Move to the next state in 3 ticks
         state = STATE_INDOOR_MAX_WORD;
         stateChangeTics = 3;
         break; 
       }
+      // ... and the same for outdoors
       case STATE_OUTDOOR_MIN_DISPLAY:
       {
+        // Display the minimum (dummy for now)
         writeNumber(2);
+        // Move to the next state in 3 ticks
         state = STATE_OUTDOOR_MAX_WORD;
         stateChangeTics = 3;
         break;
       }
+      // ... and the same for the two maximums
+      // except this time go to sleep afterwards.
       case STATE_INDOOR_MAX_DISPLAY:
       {
         writeNumber(3);
@@ -133,6 +167,7 @@ void setState()
         stateChangeTics = 3;
         break;
       }      
+      // Something went wrong.  Just go to sleep.
       default:
       {
         state=STATE_SLEEP;
@@ -140,6 +175,7 @@ void setState()
       }        
     }      
   }
+  // Decrease the state ticks if it is not zero already
   else
     stateChangeTics --;
 }   
