@@ -9,4 +9,5 @@ Debug/
 *~
 
 # Documentation
-doc/
+doc/latex/
+doc/html/
