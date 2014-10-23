@@ -36,6 +36,9 @@ extern unsigned int stateChangeTics;
 // If we should go to sleep.
 extern volatile char goToSleep;
 
+// If the state should be changed
+extern volatile char changeState;
+
 // Set the display etc to the relevant state
 void setState();
 

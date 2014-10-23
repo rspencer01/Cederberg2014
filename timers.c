@@ -53,7 +53,7 @@ ISR(TIMER0_COMPA_vect)
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
     // Update displays etc
-    setState(); 
+    changeState = 1;
   }
 }
 
@@ -104,7 +104,7 @@ ISR(INT0_vect)
   
   // Force an immediate change
   stateChangeTics = 0;   
-  setState();
+  changeState = 1;
 }  
 
 /// The INT1 vector
@@ -128,5 +128,5 @@ ISR(INT1_vect)
   
   // Force an immediate change
   stateChangeTics = 0;
-  setState();
+  changeState = 1;
 }

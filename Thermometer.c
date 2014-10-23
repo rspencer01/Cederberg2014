@@ -17,6 +17,9 @@ unsigned int stateChangeTics;
 /// Set to 1 when the main loop is to put the microcontroller to sleep
 volatile char goToSleep=0;
 
+/// Set to 1 when the main loop is to change the state
+volatile char changeState=0;
+
 /// The main entry point of the project.
 ///
 /// Performs all initialisation and then hangs in an
@@ -47,6 +50,12 @@ int main(void)
       goToSleep = 0;
       sleep();    
     }
+    // If we are to change state
+    if (changeState)
+    {
+      changeState = 0;
+      setState();
+    }      
   }
 }
 
@@ -55,8 +64,6 @@ int main(void)
 /// This function is to be called every second from the timer.
 /// It displays things like min/max and temperatures, and advances
 /// us through the display cycles.
-/// 
-/// \todo This function is very time heavy.  Don't call it from ISR.
 /// 
 /// \todo Call this something else.  This name is not clear
 void setState()
