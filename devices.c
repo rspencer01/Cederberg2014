@@ -42,7 +42,7 @@ int readThermometer(int thermometer)
 {
   int actual = readADC(ADC_CHANNEL_OUTDOOR);  
   int reference = readADC(ADC_CHANNEL_REFERENCE);
-  long long calc = ((long long)actual * 100) / reference;
+  long calc = ((long)actual * 100) / reference;
   
   // Update the min/max
   if (thermometer == INDOOR_THERMOMETER)
