@@ -89,3 +89,22 @@ void delay(int ms)
     --ms;
   }
 }
+
+/// The mesh values for the logarithm interpolation
+long logMesh   [15] = {   10,  100,  200,  300,  400,  500,  800, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500};
+/// The function evaluation for the logarithm interpolation
+long logValues [15] = {-2303,    0,  693, 1099, 1386, 1609, 2079, 2303, 2708, 2996, 3219, 3401, 3555, 3689, 3807};
+
+/// Performs a logarithm on the parameter.
+/// 
+/// Due to the limitations of integer arithmetic actually
+/// returns `1000 * log (x/100)`, hence its name
+int thouloghund (int x)
+{
+    if (x<10) return 0;
+    if (x>4500) return 0;
+    int i = 0;
+    while (x>logMesh[i]) i++;
+    long interp = logValues[i] * (logMesh[i+1]-x)/(logMesh[i+1]-logMesh[i]) + logValues[i+1] * (x-logMesh[i])/(logMesh[i+1]-logMesh[i]);
+    return interp;
+}
