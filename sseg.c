@@ -60,17 +60,75 @@ void updateDisplay()
   setPorts();
 }
 
-/// Writes a three digit integer to the display.
+/// Writes a decimal number to the display.
 ///
-/// Any number of more than 3 digits will be truncated
-/// to 3.
+/// The number passed to this function should be
+/// 100 times larger than the number to be displayed,
+/// and in the range `(-10000 , 100000)`
+/// 
+/// The decimal place will automatically be placed.
 void writeNumber(int n)
 {
-  displays[0] = SSEG_NUMBERS[n%10];
-  n/=10;
-  displays[1] = SSEG_NUMBERS[n%10];
-  n/=10;
-  displays[2] = SSEG_NUMBERS[n%10];
+  // Clear the display
+  displays[0] = displays[1] = displays[2] = 0xFF;
+  // Handle positive numbers
+  if (n>=0)
+  {
+    // Divide by 100 if we can't show decimal places (and round)
+    if (n>=10000)
+    {
+      n+=50;
+      n/=100;
+    }    
+    // Otherwise divide by 10 (with rounding) and place decimal place in second place
+    else if (n>1000)
+    {
+      n+=5;
+      n/=10;
+      displays[1] &= SSEG_DECIMAL;
+    }
+    // Else the decimal place is in the first place
+    else
+    {
+      displays[2] &= SSEG_DECIMAL;
+    }    
+    // Display the number    
+    displays[0] &= SSEG_NUMBERS[n%10];
+    n/=10;
+    displays[1] &= SSEG_NUMBERS[n%10];
+    n/=10;
+    displays[2] &= SSEG_NUMBERS[n%10];
+  } 
+  // Deal with the negative numbers  
+  else
+  {
+    // Work with positive numbers
+    n = -n;
+    // If we are too large, die.
+    if (n>=10000)
+    {
+      displays[0]=displays[1]=displays[2]=0xFF;
+      return;
+    }
+    // If we can't display a decimal point, don't
+    if (n>1000)
+    {
+      n/=100;
+    }
+    // Otherwise, show one decimal place (with rounding)
+    else
+    {
+      n+=5;
+      n/=10;
+      displays[1] &= SSEG_DECIMAL;
+    }
+    // Display two digits and the minus sign
+    displays[0] &= SSEG_NUMBERS[n%10];
+    n/=10;
+    displays[1] &= SSEG_NUMBERS[n%10];
+    n/=10;     
+    displays[2] &= SSEG_MINUS;
+  } 
 }
 
 /// Writes a message to the display.
