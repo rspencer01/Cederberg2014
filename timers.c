@@ -17,6 +17,10 @@
 int timer_4ms_1s;
 /// A counter for the watchdog to read the thermometers.
 int watchdogCount=INI_8S_64S;
+/// A counter for minimum time between pushbutton ISR0s in multiples of 4ms
+int dead_isr0_4ms;
+/// A counter for minimum time between pushbutton ISR1s in multiples of 4ms
+int dead_isr1_4ms;
 
 /// Initialises the timer module.
 ///
@@ -46,6 +50,9 @@ ISR(TIMER0_COMPA_vect)
 {
   // Update the display strobing
   updateDisplay();
+  
+  if (dead_isr0_4ms>0)dead_isr0_4ms--;
+  if (dead_isr1_4ms>0)dead_isr1_4ms--;
     
   timer_4ms_1s--;
   if (timer_4ms_1s==0)
@@ -91,10 +98,18 @@ ISR(WDT_vect)
 /// the interrupt enable flag is set. Thus the interrupt is 
 /// immediately changed to only trigger on falling edges for both
 /// pushbuttons.
+/// 
+/// In addition, to debounce the input, a minimum time between triggers
+/// is enforced by the `dead_isr0_4ms` counter.
 ISR(INT0_vect)
 {
   // Change interrupts to be only on falling edges (pushbutton pressed)
   EICRA = _BV(ISC11) | _BV(ISC01);
+  
+  // Prevent bouncing
+  if (dead_isr0_4ms>0)
+    return;
+  dead_isr0_4ms = DEBOUNCE_TIMOUT_4MS;  
   
   // Set the new state
   if (state!=STATE_INDOOR_DISPLAY)
@@ -119,6 +134,11 @@ ISR(INT1_vect)
 {
   // Change interrupts to be only on falling edges (pushbutton pressed)
   EICRA = _BV(ISC11) | _BV(ISC01);
+  
+  // Prevent bouncing
+  if (dead_isr1_4ms>0)
+    return;
+  dead_isr1_4ms = DEBOUNCE_TIMOUT_4MS;  
   
   // Set the new state
   if (state!=STATE_OUTDOOR_DISPLAY)
