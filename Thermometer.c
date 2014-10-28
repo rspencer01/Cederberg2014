@@ -111,7 +111,7 @@ void setState()
       case STATE_INDOOR_DISPLAY_PRE:
       {
         // Display the temperature (dummy for now)
-        writeNumber(100);
+        writeNumber(readThermometer(INDOOR_THERMOMETER));
         // Change the state to say that we have done it.
         state=STATE_INDOOR_DISPLAY;
         // Keep for 3 seconds
@@ -122,7 +122,7 @@ void setState()
       case STATE_OUTDOOR_DISPLAY_PRE:
       {
         // Display the temperature (dummy for now)
-        writeNumber(200);
+        writeNumber(readThermometer(OUTDOOR_THERMOMETER));
         // Change the state to say that we have done it.
         state=STATE_OUTDOOR_DISPLAY;
         // Keep for 3 seconds
@@ -142,7 +142,7 @@ void setState()
       case STATE_INDOOR_MIN_DISPLAY:
       {
         // Display the minimum (dummy for now)
-        writeNumber(1);
+        writeNumber(indoorLow);
         // Move to the next state in 3 ticks
         state = STATE_INDOOR_MAX_WORD;
         stateChangeTics = 3;
@@ -152,7 +152,7 @@ void setState()
       case STATE_OUTDOOR_MIN_DISPLAY:
       {
         // Display the minimum (dummy for now)
-        writeNumber(2);
+        writeNumber(outdoorLow);
         // Move to the next state in 3 ticks
         state = STATE_OUTDOOR_MAX_WORD;
         stateChangeTics = 3;
@@ -162,14 +162,14 @@ void setState()
       // except this time go to sleep afterwards.
       case STATE_INDOOR_MAX_DISPLAY:
       {
-        writeNumber(3);
+        writeNumber(indoorHigh);
         state = STATE_SLEEP;
         stateChangeTics = 3;
         break;
       }
       case STATE_OUTDOOR_MAX_DISPLAY:
       {
-        writeNumber(4);
+        writeNumber(outdoorHigh);
         state = STATE_SLEEP;
         stateChangeTics = 3;
         break;
