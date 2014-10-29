@@ -27,6 +27,6 @@ unsigned char setNthBit(unsigned char, unsigned char, int);
 void delay(int);
 
 // Calculates the logarithm of the given number
-int thouloghund (int);
+int hunlogthou (int);
 
 #endif /* UTILS_H_ */

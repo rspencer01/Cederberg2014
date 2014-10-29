@@ -27,4 +27,7 @@ extern int indoorLow;
 // The max indoor temperature
 extern int indoorHigh;
 
+// Value of the resistor in series above the thermistors
+#define SERIES_RESISTOR_VALUE 10000
+
 #endif /* DEVICES_H_ */

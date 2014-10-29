@@ -42,19 +42,25 @@ int readThermometer(int thermometer)
 {
   int actual = readADC(ADC_CHANNEL_OUTDOOR);  
   int reference = readADC(ADC_CHANNEL_REFERENCE);
-  long calc = ((long)actual * 100) / reference;
+  long f = ((long)actual *1000) / reference;
   
+  long R = f*SERIES_RESISTOR_VALUE/(1000-f);
+  long reciprinf100 = 843;
+  long B = 3380;
+  long T = (100*100*B) / hunlogthou(((R*reciprinf100) / 100) / 1000) - 27300;
+    
   // Update the min/max
   if (thermometer == INDOOR_THERMOMETER)
   {
-    indoorLow  = min(indoorLow,(int)calc);
-    indoorHigh = max(indoorHigh,(int)calc);
+    indoorLow  = min(indoorLow,(int)T);
+    indoorHigh = max(indoorHigh,(int)T);
   }
   if (thermometer == OUTDOOR_THERMOMETER)
   {
-    outdoorLow  = min(outdoorLow,(int)calc);
-    outdoorHigh = max(outdoorHigh,(int)calc);
+    outdoorLow  = min(outdoorLow,(int)T);
+    outdoorHigh = max(outdoorHigh,(int)T);
   }  
   
-  return (int) calc;
+
+  return T;
 }

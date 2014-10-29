@@ -90,16 +90,17 @@ void delay(int ms)
   }
 }
 
+///\todo Make sure these are reasonable ranges
 /// The mesh values for the logarithm interpolation
-long logMesh   [15] = {   10,  100,  200,  300,  400,  500,  800, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500};
+long logMesh   [15] = {   20,   40,   60,  100,  200,  300,  500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500};
 /// The function evaluation for the logarithm interpolation
-long logValues [15] = {-2303,    0,  693, 1099, 1386, 1609, 2079, 2303, 2708, 2996, 3219, 3401, 3555, 3689, 3807};
+long logValues [15] = {  990, 1060, 1100, 1151, 1221, 1261, 1312, 1382, 1422, 1451, 1473, 1491, 1507, 1520, 1532};
 
 /// Performs a logarithm on the parameter.
 /// 
 /// Due to the limitations of integer arithmetic actually
-/// returns `1000 * log (x/100)`, hence its name
-int thouloghund (int x)
+/// returns `100 * log (x*1000)`, hence its name
+int hunlogthou (int x)
 {
     if (x<10) return 0;
     if (x>4500) return 0;
