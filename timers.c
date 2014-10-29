@@ -112,10 +112,20 @@ ISR(INT0_vect)
   dead_isr0_4ms = DEBOUNCE_TIMOUT_4MS;  
   
   // Set the new state
-  if (state!=STATE_INDOOR_DISPLAY)
-    state = STATE_INDOOR_DISPLAY_PRE;
-  else
-    state = STATE_INDOOR_MIN_WORD;
+  switch (state)
+  {
+    case STATE_INDOOR_DISPLAY:
+    {
+      state = STATE_INDOOR_MIN_WORD;
+      break;
+    }
+    case STATE_INDOOR_MIN_WORD:
+    case STATE_INDOOR_MIN_DISPLAY:
+      state = STATE_INDOOR_MAX_WORD;
+      break;
+    default:
+      state = STATE_INDOOR_DISPLAY_PRE;          
+  }
   
   // Force an immediate change
   stateChangeTics = 0;   
@@ -141,10 +151,22 @@ ISR(INT1_vect)
   dead_isr1_4ms = DEBOUNCE_TIMOUT_4MS;  
   
   // Set the new state
-  if (state!=STATE_OUTDOOR_DISPLAY)
-    state = STATE_OUTDOOR_DISPLAY_PRE;
-  else
-    state = STATE_OUTDOOR_MIN_WORD;
+  switch (state)
+  {
+    case STATE_OUTDOOR_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MIN_WORD;
+      break;
+    }
+    case STATE_OUTDOOR_MIN_WORD:
+    case STATE_OUTDOOR_MIN_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MAX_WORD;
+      break;
+    }      
+    default:
+      state = STATE_OUTDOOR_DISPLAY_PRE;
+  }
   
   // Force an immediate change
   stateChangeTics = 0;
