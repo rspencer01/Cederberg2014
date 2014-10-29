@@ -110,6 +110,8 @@ void setState()
       // indoor temperature.
       case STATE_INDOOR_DISPLAY_PRE:
       {
+        // Switch off the display, momentarily.
+        writeClear();
         // Display the temperature (dummy for now)
         writeNumber(readThermometer(INDOOR_THERMOMETER));
         // Change the state to say that we have done it.

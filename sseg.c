@@ -156,6 +156,15 @@ void writeMessage(int msg)
   }
 }
 
+/// Turns off all the LEDs
+/// 
+/// Different to clearDisplay in that it doesn't turn off the
+/// control lines, but all the separate LED lines.
+void writeClear()
+{
+  display[0] = display[1] = display[2] = 0xFF;
+}
+
 /// Switches off the display
 ///
 /// Simply turns off all the control lines without changing

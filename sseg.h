@@ -62,6 +62,9 @@ void writeNumber(int);
 void writeMessage(int msg);
 
 // Clears the display so it shows nothing
+void writeClear()
+
+// Clears the display so it shows nothing via the control lines
 void clearDisplay();
 
 #endif /* SSEG_H_ */
