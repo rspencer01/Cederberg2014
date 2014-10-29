@@ -162,7 +162,7 @@ void writeMessage(int msg)
 /// control lines, but all the separate LED lines.
 void writeClear()
 {
-  display[0] = display[1] = display[2] = 0xFF;
+  displays[0] = displays[1] = displays[2] = 0xFF;
 }
 
 /// Switches off the display

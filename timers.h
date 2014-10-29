@@ -14,7 +14,7 @@
 // Scalar to change watchdog 8s to 64s
 #define INI_8S_64S 8
 // Scalar to wait in 4ms for debouncing
-#define DEBOUNCE_TIMOUT_4MS 40
+#define DEBOUNCE_TIMOUT_4MS 80
 
 // Sets up all the timer stuff
 void initTimers();
