@@ -112,8 +112,6 @@ void setState()
       case STATE_INDOOR_DISPLAY_PRE:
       {
         // Switch off the display, momentarily.
-        ///\todo Find why this still shows last temperature briefly.
-        writeClear();
         // Display the temperature (dummy for now)
         writeNumber(readThermometer(INDOOR_THERMOMETER));
         // Change the state to say that we have done it.

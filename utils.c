@@ -46,6 +46,7 @@ void initMicro()
 void sleep()
 {
   // Make the screen blank
+  writeClear();
   clearDisplay();
   // Push button interrupts on lows.  This is so that
   // we actually wake up.  Must be changed in the ISR.
