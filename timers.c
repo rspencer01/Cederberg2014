@@ -21,6 +21,10 @@ int watchdogCount=INI_8S_64S;
 int dead_isr0_4ms;
 /// A counter for minimum time between pushbutton ISR1s in multiples of 4ms
 int dead_isr1_4ms;
+/// A counter for how long the button has been held down for reset
+int indoorHold;
+/// A counter for how long the button has been held down for reset
+int outdoorHold;
 
 /// Initialises the timer module.
 ///
@@ -46,17 +50,52 @@ void initTimers()
 /// Updates the display strobe on a 4ms basis.  Also counts
 /// down the time to be alive and sets the sleep flag if the
 /// timeout is reached.
+///
+/// Finally, decreases counters for the holding down of buttons
+/// 
 ISR(TIMER0_COMPA_vect)
 {
   // Update the display strobing
   updateDisplay();
   
+  // Decrease dead times on the buttons
   if (dead_isr0_4ms>0)dead_isr0_4ms--;
   if (dead_isr1_4ms>0)dead_isr1_4ms--;
     
   timer_4ms_1s--;
   if (timer_4ms_1s==0)
   {
+    // Decrease the hold timer if the button is down, else reset it.
+    if (readPushButton(INDOOR_PUSHBUTTON))
+      indoorHold--;
+    else
+      indoorHold = HOLD_TIME;
+    // If we have reached the timeout, reset the min/max
+    if (indoorHold==0)
+    {
+      // Perhaps we have been told to go to sleep.  Don't.
+      goToSleep = 0;
+      state = STATE_INDOOR_RESET;
+      // Ignore everything to do with pushbuttons.
+      EIMSK = 0;
+    }      
+    
+    // Decrease the hold timer if the button is down, else reset it.
+    if (readPushButton(OUTDOOR_PUSHBUTTON))
+      outdoorHold--;
+    else
+      outdoorHold = HOLD_TIME;
+    // If we have reached the timeout, reset the min/max
+    if (outdoorHold==0)
+    {
+      // Perhaps we have been told to go to sleep.  Don't.
+      goToSleep = 0;
+      state = STATE_OUTDOOR_RESET;
+      // Ignore everything to do with pushbuttons.
+      EIMSK = 0;
+    }
+    
+      
     // Occurs every second
     timer_4ms_1s = INI_4MS_1S;
     // Update displays etc

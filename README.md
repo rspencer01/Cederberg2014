@@ -7,11 +7,13 @@ The project for [eBase 2014](http://www.sasebase.net) is an indoor/outdoor therm
 
 Operation
 ---------
-The human interaction is through three seven segment displays and two push buttons.  The value of `DISP_TIME` is currently undecided, but will probably be about 3 seconds.
+The human interaction is through three seven segment displays and two push buttons.
 
-Pressing a pushbutton and releasing will result in the relevant temperature for `DISP_TIME` seconds.  If the button is pressed again within that time, the minimum and then maximum (on another pushbutton press) for that thermometer will be displayed.  The flow is shown below
+Pressing a pushbutton and releasing will result in the relevant temperature for 3 seconds.  If the button is pressed again within that time, the minimum (and then maximum on another pushbutton press) for that thermometer will be displayed.  The flow is shown below
 
 <div style="text-align:center;padding:15px"><img alt="Flow of state" src="doc/state_flow.png" width="500px"></div>
+
+Furthermore, holding down a pushbutton for 5 seconds will result in the relevant minimum and maximum being cleared.
 
 Desgin Considerations
 ---------------------

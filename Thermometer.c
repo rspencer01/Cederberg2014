@@ -177,6 +177,24 @@ void setState()
         stateChangeTics = 3;
         break;
       }      
+      // Reset the indoor thermometer
+      case STATE_INDOOR_RESET:
+      {
+        writeMessage(SSEG_MSG_CLR);
+        resetMinMax();
+        state = STATE_SLEEP;
+        stateChangeTics = 3;
+        break;
+      }
+      // Reset the outdoor thermometer
+      case STATE_OUTDOOR_RESET:
+      {
+        writeMessage(SSEG_MSG_CLR);
+        resetMinMax();
+        state = STATE_SLEEP;
+        stateChangeTics = 3;
+        break;
+      }      
       // Something went wrong.  Just go to sleep.
       default:
       {
