@@ -32,7 +32,8 @@ int main(void)
   initPorts();
   initTimers();
   // Reset the thermometer
-  resetMinMax();
+  resetMinMax(INDOOR_THERMOMETER);
+  resetMinMax(OUTDOOR_THERMOMETER);
   
   goToSleep = 1;
   // Loop forever
@@ -181,7 +182,7 @@ void setState()
       case STATE_INDOOR_RESET:
       {
         writeMessage(SSEG_MSG_CLR);
-        resetMinMax();
+        resetMinMax(INDOOR_THERMOMETER);
         state = STATE_SLEEP;
         stateChangeTics = 3;
         break;
@@ -190,7 +191,7 @@ void setState()
       case STATE_OUTDOOR_RESET:
       {
         writeMessage(SSEG_MSG_CLR);
-        resetMinMax();
+        resetMinMax(OUTDOOR_THERMOMETER);
         state = STATE_SLEEP;
         stateChangeTics = 3;
         break;

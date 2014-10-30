@@ -16,7 +16,7 @@
 int readThermometer(int);
 
 // Clears the minimum and maximums
-void resetMinMax();
+void resetMinMax(int);
 
 // The min outdoor temperature
 extern int outdoorLow;
