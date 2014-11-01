@@ -36,6 +36,7 @@
 #define SSEG_EIGHT   0b10000000
 #define SSEG_NINE    0b10010000
 
+// Symbols
 #define SSEG_DECIMAL 0b01111111
 #define SSEG_MINUS   0b10111111
 

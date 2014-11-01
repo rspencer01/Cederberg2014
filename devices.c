@@ -48,7 +48,7 @@ int readThermometer(int thermometer)
 {
   int actual = readADC(ADC_CHANNEL_OUTDOOR);  
   int reference = readADC(ADC_CHANNEL_REFERENCE);
-  // Fraction of voltage
+  // Thousand times fraction of voltage
   long f = ((long)actual *1000) / reference;
   // Resistance of thermistor
   long R = f*SERIES_RESISTOR_VALUE/(1000-f);

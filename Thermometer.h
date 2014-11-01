@@ -8,6 +8,7 @@
 #ifndef THERMOMETER_H_
 #define THERMOMETER_H_
 
+// The masses of different allowed states.
 #define STATE_DISPLAY_MIN         0b0000100
 #define STATE_DISPLAY_MAX         0b0001000
 

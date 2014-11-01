@@ -51,7 +51,7 @@ int main(void)
       goToSleep = 0;
       sleep();    
     }
-    // If we are to change state
+    // If we are to change state, do so
     if (changeState)
     {
       changeState = 0;

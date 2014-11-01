@@ -108,8 +108,6 @@ ISR(TIMER0_COMPA_vect)
 /// Called whenever the watchdog times out (once every 8s)
 /// Reads the thermometers in order to keep a minimum/maximum
 /// that is updated every 64s.
-///
-/// \todo Test that the reading actually works.
 ISR(WDT_vect)
 {
   if (state!=STATE_SLEEP)
@@ -153,15 +151,21 @@ ISR(INT0_vect)
   // Set the new state
   switch (state)
   {
+    // If displaying the indoor temperature, initiate the min/max
+    // cycle    
     case STATE_INDOOR_DISPLAY:
     {
       state = STATE_INDOOR_MIN_WORD;
       break;
     }
+    // Fast track the min to max cycle
     case STATE_INDOOR_MIN_WORD:
     case STATE_INDOOR_MIN_DISPLAY:
+    {
       state = STATE_INDOOR_MAX_WORD;
       break;
+    }     
+    // In other cases, just start to display the temperature
     default:
       state = STATE_INDOOR_DISPLAY_PRE;          
   }
@@ -192,17 +196,21 @@ ISR(INT1_vect)
   // Set the new state
   switch (state)
   {
+    // If displaying the outdoor temperature, initiate the min/max
+    // cycle
     case STATE_OUTDOOR_DISPLAY:
     {
       state = STATE_OUTDOOR_MIN_WORD;
       break;
     }
+    // Fast track the min to max cycle
     case STATE_OUTDOOR_MIN_WORD:
     case STATE_OUTDOOR_MIN_DISPLAY:
     {
       state = STATE_OUTDOOR_MAX_WORD;
       break;
     }      
+    // In other cases, just start to display the temperature
     default:
       state = STATE_OUTDOOR_DISPLAY_PRE;
   }

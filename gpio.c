@@ -49,8 +49,8 @@ unsigned char portD = 0;
 /// |:---------:|:------------------:|:----:|
 /// |`0`        | `SSEG 0`           | `O`  |
 /// |`1`        | `SSEG SELECT 0`    | `O`  |
-/// |`2`        | Outdoor Pushbutton |      |
-/// |`3`        | Indoor Pushbutton  |      |
+/// |`2`        | Outdoor Pushbutton | `I`  |
+/// |`3`        | Indoor Pushbutton  | `I`  |
 /// |`4`        | `SSEG SELECT 1`    | `O`  |
 /// |`5`        | `SSEG 3`           | `O`  |
 /// |`6`        | `SSEG SELECT 0`    | `O`  |
@@ -66,7 +66,7 @@ void initPorts()
 
 /// Sets all the ports to be the values stored in the buffers.
 ///
-/// We use buffers for the ports as operations such as `PORTD^=0x10` are
+/// We use buffers for the ports as operations such as `PORTD^=0x02` are
 /// not well defined (it implies a read of an output pin, which may be
 /// sensitive on the circuitry).
 ///
@@ -92,8 +92,6 @@ char readPushButton(int id)
 ///
 /// Performs an ADC and blocks until the result comes in.  Returns
 /// a value from 0 to 1023, where 0 is 0V and 1023 is VCC.
-///
-/// \todo See why the results are so inaccurate
 int readADC(int channel)
 {
   // The maximum value.  Read off ADC2
