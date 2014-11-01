@@ -41,17 +41,24 @@
 #define SSEG_MINUS   0b10111111
 
 // Representation of some letters
-#define SSEG_R 0b10101111
+#define SSEG_A 0b10001000
 #define SSEG_C 0b11000110
-#define SSEG_L 0b11000111
+#define SSEG_E 0b10000110
 #define SSEG_H 0b10001001
-#define SSEG_O 0b10100011
-#define SSEG_I 0b11101111
+#define SSEG_I 0b11001111
+#define SSEG_L 0b11000111
+#define SSEG_O 0b11000000
+#define SSEG_Q 0b10011000
+#define SSEG_R 0b10101111
+#define SSEG_U 0b11000001
 
 // Some messages that will be used
 #define SSEG_MSG_CLR 0
 #define SSEG_MSG_HI  1
 #define SSEG_MSG_LO  2
+#define SSEG_MSG_EQU 3
+#define SSEG_MSG_CAL 4
+#define SSEG_MSG_ICE 5
 
 // Performs the strobing
 void updateDisplay();

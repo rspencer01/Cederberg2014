@@ -154,6 +154,24 @@ void writeMessage(int msg)
     displays[1] = SSEG_L;
     displays[0] = SSEG_O;
   }
+  if (msg==SSEG_MSG_EQU)
+  {
+    displays[2] = SSEG_E;
+    displays[1] = SSEG_Q;
+    displays[0] = SSEG_U;  
+  }
+  if (msg==SSEG_MSG_ICE)
+  {
+    displays[2] = SSEG_I;
+    displays[1] = SSEG_C;
+    displays[0] = SSEG_E;
+  }
+  if (msg==SSEG_MSG_CAL)
+  {
+    displays[2] = SSEG_C;
+    displays[1] = SSEG_A;
+    displays[0] = SSEG_L;
+  }
 }
 
 /// Turns off all the LEDs
