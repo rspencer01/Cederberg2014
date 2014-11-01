@@ -10,8 +10,8 @@
 #define TIMERS_H_
 
 // Scalars to change 4ms to 1 second via 40ms
-#define INI_4MS_40MS 10
-#define INI_40MS_1S 25
+#define INI_4MS_20MS 5
+#define INI_20MS_1S 50
 // Scalar to change watchdog 8s to 64s
 #define INI_8S_64S 8
 // Scalar to wait in 4ms for debouncing

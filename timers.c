@@ -14,9 +14,9 @@
 #include "gpio.h"
 
 /// A countdown to divide the 4ms timer into 40ms
-int timer_4ms_40ms;
+int timer_4ms_20ms;
 /// A countdown to divide the 40ms timer into 1s
-int timer_40ms_1s;
+int timer_20ms_1s;
 
 /// A counter for the watchdog to read the thermometers.
 int watchdogCount=INI_8S_64S;
@@ -28,6 +28,10 @@ int dead_isr1_4ms;
 int indoorHold;
 /// A counter for how long the button has been held down for reset
 int outdoorHold;
+/// The indoor pushbutton debounce series
+int indoorDebounce;
+/// The outdoor pushbutton debounce series
+int outdoorDebounce;
 
 /// Handles the pushbutton press
 ///
@@ -123,8 +127,11 @@ void initTimers()
   // Set compare match to be 128 (64micros*128 = 8ms)
   OCR0A = 64;
   // Set up the scalars
-  timer_4ms_40ms = INI_4MS_40MS;
-  timer_40ms_1s = INI_40MS_1S;
+  timer_4ms_20ms = INI_4MS_20MS;
+  timer_20ms_1s = INI_20MS_1S;
+  // Set up the debouncers
+  indoorDebounce = 0;
+  outdoorDebounce = 0;
 }
 
 /// The interrupt service routine for the timer0
@@ -144,16 +151,29 @@ ISR(TIMER0_COMPA_vect)
   if (dead_isr0_4ms>0)dead_isr0_4ms--;
   if (dead_isr1_4ms>0)dead_isr1_4ms--;
     
-  timer_4ms_40ms--;
-  if (timer_4ms_40ms==0)
+  timer_4ms_20ms--;
+  if (timer_4ms_20ms==0)
   {
     // Occurs every 40ms
-    timer_4ms_40ms = INI_4MS_40MS;
-    timer_40ms_1s--;
-    if (timer_40ms_1s==0)
+    timer_4ms_20ms = INI_4MS_20MS;
+    
+    // Shift and read in the next indoor debounce
+    indoorDebounce <<= 1;
+    if (readPushButton(INDOOR_PUSHBUTTON)) indoorDebounce |= 1;
+    // If we have a definite push, do something about it
+    if (indoorDebounce == 0b00011111)
+      indoorPushbuttonPress();
+    // And the same for the outdoors
+    outdoorDebounce <<= 1;
+    if (readPushButton(OUTDOOR_PUSHBUTTON)) outdoorDebounce |= 1;
+    if (outdoorDebounce == 0b00011111)
+     outdoorPushbuttonPress();      
+    
+    timer_20ms_1s--;
+    if (timer_20ms_1s==0)
     {
       // Occurs every second
-      timer_40ms_1s = INI_40MS_1S;      
+      timer_20ms_1s = INI_20MS_1S;      
       // Decrease the hold timer if the button is down, else reset it.
       if (readPushButton(INDOOR_PUSHBUTTON))
         indoorHold--;
@@ -233,9 +253,6 @@ ISR(INT0_vect)
   if (dead_isr0_4ms>0)
     return;
   dead_isr0_4ms = DEBOUNCE_TIMOUT_4MS;  
-  
-  // Do the indoor stuff
-  indoorPushbuttonPress();
 }    
 
 /// The INT1 vector
@@ -255,7 +272,4 @@ ISR(INT1_vect)
   if (dead_isr1_4ms>0)
     return;
   dead_isr1_4ms = DEBOUNCE_TIMOUT_4MS;  
-  
-  // Do the outdoor stuff.
-  outdoorPushbuttonPress();
 }
