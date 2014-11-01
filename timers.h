@@ -14,8 +14,6 @@
 #define INI_20MS_1S 50
 // Scalar to change watchdog 8s to 64s
 #define INI_8S_64S 8
-// Scalar to wait in 4ms for debouncing
-#define DEBOUNCE_TIMOUT_4MS 80
 // Number of seconds to hold the button down for before reseting
 #define HOLD_TIME 5
 
