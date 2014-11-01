@@ -26,6 +26,84 @@ int indoorHold;
 /// A counter for how long the button has been held down for reset
 int outdoorHold;
 
+/// Handles the pushbutton press
+///
+/// Performs all the state changes etc regarding the indoor push
+/// button press.  Instructs the main loop to immediately undergo
+/// a state change, after setting the state variable correctly.
+///
+/// \todo Put this in another file!
+void indoorPushbuttonPress()
+{
+  // Set the new state
+  switch (state)
+  {
+    // If displaying the indoor temperature, initiate the min/max
+    // cycle
+    case STATE_INDOOR_DISPLAY:
+    {
+      state = STATE_INDOOR_MIN_WORD;
+      break;
+    }
+    // Fast track the min to max cycle
+    case STATE_INDOOR_MIN_WORD:
+    case STATE_INDOOR_MIN_DISPLAY:
+    {
+      state = STATE_INDOOR_MAX_WORD;
+      break;
+    }
+    // If we are showing max word do nothing, to fast track
+    case STATE_INDOOR_MAX_WORD:
+      break;
+    // In other cases, just start to display the temperature
+    default:
+      state = STATE_INDOOR_DISPLAY_PRE;
+  }
+    
+  // Force an immediate change
+  stateChangeTics = 0;
+  changeState = 1;
+}
+
+/// Handles the pushbutton press
+/// 
+/// Performs all the state changes etc regarding the outdoor push
+/// button press.  Instructs the main loop to immediately undergo
+/// a state change, after setting the state variable correctly.
+///
+/// \todo Put this in another file!
+void outdoorPushbuttonPress()
+{
+  // Set the new state
+  switch (state)
+  {
+    // If displaying the outdoor temperature, initiate the min/max
+    // cycle
+    case STATE_OUTDOOR_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MIN_WORD;
+      break;
+    }
+    // Fast track the min to max cycle
+    case STATE_OUTDOOR_MIN_WORD:
+    case STATE_OUTDOOR_MIN_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MAX_WORD;
+      break;
+    }
+    // If we are showing max word do nothing, to fast track    
+    case STATE_OUTDOOR_MAX_WORD:
+      break;    
+    // In other cases, just start to display the temperature
+    default:
+    state = STATE_OUTDOOR_DISPLAY_PRE;
+  }
+  
+  // Force an immediate change
+  stateChangeTics = 0;
+  changeState = 1;    
+}
+
 /// Initialises the timer module.
 ///
 /// Sets up the timers to operate on a 4ms and a 1s basis.
@@ -148,32 +226,9 @@ ISR(INT0_vect)
     return;
   dead_isr0_4ms = DEBOUNCE_TIMOUT_4MS;  
   
-  // Set the new state
-  switch (state)
-  {
-    // If displaying the indoor temperature, initiate the min/max
-    // cycle    
-    case STATE_INDOOR_DISPLAY:
-    {
-      state = STATE_INDOOR_MIN_WORD;
-      break;
-    }
-    // Fast track the min to max cycle
-    case STATE_INDOOR_MIN_WORD:
-    case STATE_INDOOR_MIN_DISPLAY:
-    {
-      state = STATE_INDOOR_MAX_WORD;
-      break;
-    }     
-    // In other cases, just start to display the temperature
-    default:
-      state = STATE_INDOOR_DISPLAY_PRE;          
-  }
-  
-  // Force an immediate change
-  stateChangeTics = 0;   
-  changeState = 1;
-}  
+  // Do the indoor stuff
+  indoorPushbuttonPress();
+}    
 
 /// The INT1 vector
 ///
@@ -193,29 +248,6 @@ ISR(INT1_vect)
     return;
   dead_isr1_4ms = DEBOUNCE_TIMOUT_4MS;  
   
-  // Set the new state
-  switch (state)
-  {
-    // If displaying the outdoor temperature, initiate the min/max
-    // cycle
-    case STATE_OUTDOOR_DISPLAY:
-    {
-      state = STATE_OUTDOOR_MIN_WORD;
-      break;
-    }
-    // Fast track the min to max cycle
-    case STATE_OUTDOOR_MIN_WORD:
-    case STATE_OUTDOOR_MIN_DISPLAY:
-    {
-      state = STATE_OUTDOOR_MAX_WORD;
-      break;
-    }      
-    // In other cases, just start to display the temperature
-    default:
-      state = STATE_OUTDOOR_DISPLAY_PRE;
-  }
-  
-  // Force an immediate change
-  stateChangeTics = 0;
-  changeState = 1;
+  // Do the outdoor stuff.
+  outdoorPushbuttonPress();
 }
