@@ -13,8 +13,11 @@
 #include "devices.h"
 #include "gpio.h"
 
-/// A countdown to divide the 4ms timer into 1s
-int timer_4ms_1s;
+/// A countdown to divide the 4ms timer into 40ms
+int timer_4ms_40ms;
+/// A countdown to divide the 40ms timer into 1s
+int timer_40ms_1s;
+
 /// A counter for the watchdog to read the thermometers.
 int watchdogCount=INI_8S_64S;
 /// A counter for minimum time between pushbutton ISR0s in multiples of 4ms
@@ -120,7 +123,8 @@ void initTimers()
   // Set compare match to be 128 (64micros*128 = 8ms)
   OCR0A = 64;
   // Set up the scalars
-  timer_4ms_1s = INI_4MS_1S;
+  timer_4ms_40ms = INI_4MS_40MS;
+  timer_40ms_1s = INI_40MS_1S;
 }
 
 /// The interrupt service routine for the timer0
@@ -140,44 +144,48 @@ ISR(TIMER0_COMPA_vect)
   if (dead_isr0_4ms>0)dead_isr0_4ms--;
   if (dead_isr1_4ms>0)dead_isr1_4ms--;
     
-  timer_4ms_1s--;
-  if (timer_4ms_1s==0)
+  timer_4ms_40ms--;
+  if (timer_4ms_40ms==0)
   {
-    // Decrease the hold timer if the button is down, else reset it.
-    if (readPushButton(INDOOR_PUSHBUTTON))
-      indoorHold--;
-    else
-      indoorHold = HOLD_TIME;
-    // If we have reached the timeout, reset the min/max
-    if (indoorHold==0)
+    // Occurs every 40ms
+    timer_4ms_40ms = INI_4MS_40MS;
+    timer_40ms_1s--;
+    if (timer_40ms_1s==0)
     {
-      // Perhaps we have been told to go to sleep.  Don't.
-      goToSleep = 0;
-      state = STATE_INDOOR_RESET;
-      // Ignore everything to do with pushbuttons.
-      EIMSK = 0;
+      // Occurs every second
+      timer_40ms_1s = INI_40MS_1S;      
+      // Decrease the hold timer if the button is down, else reset it.
+      if (readPushButton(INDOOR_PUSHBUTTON))
+        indoorHold--;
+      else
+        indoorHold = HOLD_TIME;
+      // If we have reached the timeout, reset the min/max
+      if (indoorHold==0)
+      {
+        // Perhaps we have been told to go to sleep.  Don't.
+        goToSleep = 0;
+        state = STATE_INDOOR_RESET;
+        // Ignore everything to do with pushbuttons.
+        EIMSK = 0;
+      }      
+    
+      // Decrease the hold timer if the button is down, else reset it.
+      if (readPushButton(OUTDOOR_PUSHBUTTON))
+        outdoorHold--;
+      else
+        outdoorHold = HOLD_TIME;
+      // If we have reached the timeout, reset the min/max
+      if (outdoorHold==0)
+      {
+        // Perhaps we have been told to go to sleep.  Don't.
+        goToSleep = 0;
+        state = STATE_OUTDOOR_RESET;
+        // Ignore everything to do with pushbuttons.
+        EIMSK = 0;
+      }
+      // Update displays etc
+      changeState = 1;      
     }      
-    
-    // Decrease the hold timer if the button is down, else reset it.
-    if (readPushButton(OUTDOOR_PUSHBUTTON))
-      outdoorHold--;
-    else
-      outdoorHold = HOLD_TIME;
-    // If we have reached the timeout, reset the min/max
-    if (outdoorHold==0)
-    {
-      // Perhaps we have been told to go to sleep.  Don't.
-      goToSleep = 0;
-      state = STATE_OUTDOOR_RESET;
-      // Ignore everything to do with pushbuttons.
-      EIMSK = 0;
-    }
-    
-      
-    // Occurs every second
-    timer_4ms_1s = INI_4MS_1S;
-    // Update displays etc
-    changeState = 1;
   }
 }
 
