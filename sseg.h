@@ -60,6 +60,10 @@
 #define SSEG_MSG_CAL 4
 #define SSEG_MSG_ICE 5
 
+// The directions.  Because
+#define LEFT  1
+#define RIGHT 2
+
 // Performs the strobing
 void updateDisplay();
 
@@ -74,5 +78,8 @@ void writeClear();
 
 // Clears the display so it shows nothing via the control lines
 void clearDisplay();
+
+// Writes one of those left right side tics
+void writeTick(int);
 
 #endif /* SSEG_H_ */

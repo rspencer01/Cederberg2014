@@ -20,6 +20,12 @@ volatile char goToSleep=0;
 /// Set to 1 when the main loop is to change the state
 volatile char changeState=0;
 
+/// The left or right tics to be displayed.  Not to be confused with ticks
+/// which are units of time.
+int tics = 0;
+/// The message to be displayed inbetween the tics
+int tics_message = 0;
+
 /// The main entry point of the project.
 ///
 /// Performs all initialisation and then hangs in an
@@ -60,8 +66,6 @@ int main(void)
   }
 }
 
-int tics = 0;
-int tics_message = 0;
 /// Sets the display and updates the state
 /// 
 /// This function is to be called every second from the timer.
@@ -197,39 +201,44 @@ void setState()
         stateChangeTics = 3;
         break;
       }      
+      // Initialise the flashing CAL and left right ticks
       case STATE_CALIBRATE_INIT:
       {
         state = STATE_CALIBRATE_WAIT;
         writeMessage(SSEG_MSG_CAL);
         tics_message = SSEG_MSG_CAL;
-        tics = 3;
+        tics = LEFT|RIGHT;
         stateChangeTics = 15;
         break;
       }
+      // On timeout, we go to sleep
       case STATE_CALIBRATE_WAIT:
       {
         state = STATE_SLEEP;
         stateChangeTics = 0;
         break;        
       }
+      // Write out the equality message
       case STATE_CALIBRATE_INDOOR_PRE:
       {
         state = STATE_CALIBRATE_INDOOR;
         writeMessage(SSEG_MSG_EQU);
         tics_message = SSEG_MSG_EQU;
-        tics = 1;
+        tics = LEFT;
         stateChangeTics = 7;
         break;        
       }
+      // Write out the ice message thingy
       case STATE_CALIBRATE_OUTDOOR_PRE:
       {
         state = STATE_CALIBRATE_OUTDOOR;
         writeMessage(SSEG_MSG_ICE);
         tics_message = SSEG_MSG_ICE;
-        tics = 2;
+        tics = RIGHT;
         stateChangeTics = 7;
         break;
       }      
+      // Do nothing for now, except remove the tics and go to sleep.
       case STATE_CALIBRATE_INDOOR:
       case STATE_CALIBRATE_OUTDOOR:
       {
@@ -252,7 +261,7 @@ void setState()
   if (tics)
   {
     if (stateChangeTics%2==0)
-      writeNumber(888);
+      writeTick(tics);
     else
       writeMessage(tics_message);
   }

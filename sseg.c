@@ -195,3 +195,13 @@ void clearDisplay()
   SSEG_SELECT_PORT &= ~ SSEG_SELECT_MASK;  
   setPorts();
 }
+
+/// Writes a minus sign on the approptriate side
+void writeTick(int side)
+{
+  displays[2] = displays[1] = displays[0] = 0xFF;
+  if (side&LEFT)
+    displays[2] = SSEG_MINUS;
+  if (side&RIGHT)
+    displays[0] = SSEG_MINUS;
+}
