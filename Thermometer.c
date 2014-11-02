@@ -60,6 +60,8 @@ int main(void)
   }
 }
 
+int tics = 0;
+int tics_message = 0;
 /// Sets the display and updates the state
 /// 
 /// This function is to be called every second from the timer.
@@ -104,6 +106,7 @@ void setState()
       // We are to go to sleep.  Tell the main loop
       case STATE_SLEEP:
       {
+        tics = 0;
         goToSleep = 1;
         break;
       }
@@ -137,7 +140,7 @@ void setState()
       case STATE_OUTDOOR_DISPLAY:
       {
           state=STATE_SLEEP;
-          goToSleep = 1;
+          stateChangeTics = 0;
           break;
       }
       // Display the minimum for indoors
@@ -194,6 +197,46 @@ void setState()
         stateChangeTics = 3;
         break;
       }      
+      case STATE_CALIBRATE_INIT:
+      {
+        state = STATE_CALIBRATE_WAIT;
+        writeMessage(SSEG_MSG_CAL);
+        tics_message = SSEG_MSG_CAL;
+        tics = 3;
+        stateChangeTics = 15;
+        break;
+      }
+      case STATE_CALIBRATE_WAIT:
+      {
+        state = STATE_SLEEP;
+        stateChangeTics = 0;
+        break;        
+      }
+      case STATE_CALIBRATE_INDOOR_PRE:
+      {
+        state = STATE_CALIBRATE_INDOOR;
+        writeMessage(SSEG_MSG_EQU);
+        tics_message = SSEG_MSG_EQU;
+        tics = 1;
+        stateChangeTics = 7;
+        break;        
+      }
+      case STATE_CALIBRATE_OUTDOOR_PRE:
+      {
+        state = STATE_CALIBRATE_OUTDOOR;
+        writeMessage(SSEG_MSG_ICE);
+        tics_message = SSEG_MSG_ICE;
+        tics = 2;
+        stateChangeTics = 7;
+        break;
+      }      
+      case STATE_CALIBRATE_INDOOR:
+      case STATE_CALIBRATE_OUTDOOR:
+      {
+        tics = 0;
+        state = STATE_SLEEP;
+        goToSleep = 1;
+      }
       // Something went wrong.  Just go to sleep.
       default:
       {
@@ -205,4 +248,12 @@ void setState()
   // Decrease the state ticks if it is not zero already
   else
     stateChangeTics --;
+  // Some ops require inter state screen changes
+  if (tics)
+  {
+    if (stateChangeTics%2==0)
+      writeNumber(888);
+    else
+      writeMessage(tics_message);
+  }
 }   

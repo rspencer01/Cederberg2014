@@ -58,6 +58,12 @@ void indoorPushbuttonPress()
     // If we are showing max word do nothing, to fast track
     case STATE_INDOOR_MAX_WORD:
       break;
+    // If we are in calibration mode, do the indoor
+    case STATE_CALIBRATE_WAIT:
+    {
+      state = STATE_CALIBRATE_INDOOR_PRE;
+      break;
+    }      
     // In other cases, just start to display the temperature
     default:
       state = STATE_INDOOR_DISPLAY_PRE;
@@ -97,6 +103,12 @@ void outdoorPushbuttonPress()
     // If we are showing max word do nothing, to fast track    
     case STATE_OUTDOOR_MAX_WORD:
       break;    
+    // If we are in calibration mode, do the outdoor
+    case STATE_CALIBRATE_WAIT:
+    {
+      state = STATE_CALIBRATE_OUTDOOR_PRE;
+      break;
+    }
     // In other cases, just start to display the temperature
     default:
     state = STATE_OUTDOOR_DISPLAY_PRE;
@@ -146,7 +158,7 @@ ISR(TIMER0_COMPA_vect)
   timer_4ms_20ms--;
   if (timer_4ms_20ms==0)
   {
-    // Occurs every 40ms
+    // Occurs every 240ms
     timer_4ms_20ms = INI_4MS_20MS;
     
     // Shift and read in the next indoor debounce
@@ -195,8 +207,16 @@ ISR(TIMER0_COMPA_vect)
         // Ignore everything to do with pushbuttons.
         EIMSK = 0;
       }
+      
+      // Oooh, both push buttons.  Go into calibration.
+      if ((indoorHold == 0) && (outdoorHold==0))
+      {
+        goToSleep = 0;
+        state = STATE_CALIBRATE_INIT;
+      }
+            
       // Update displays etc
-      changeState = 1;      
+      changeState = 1;            
     }      
   }
 }
@@ -236,6 +256,7 @@ ISR(INT0_vect)
 {
   EIMSK = 0;
 }    
+
 
 /// The INT1 vector
 ///
