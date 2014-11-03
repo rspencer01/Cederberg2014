@@ -26,10 +26,14 @@ The device is driven by 2 AA batteries.  As such, battery life is paramount.  Th
 
  * When the displays are not on and no reading is being taken, the microcontroller will be in "sleep mode".  This is an extremely low current draw mode.  Measurements were not accurate enough to determine actual current draw in sleep mode (noise was overriding).
 
+ * To a computer programmer, the `thouloghundredth` function may seem odd.  Why not use a library to calculate log?  The reason is that we are not even afforded the privilidge of `long long`s much less `float`s.  All operations must be integer, and it turns out that a simple linear search on mesh points is accurate enough and easier to read than other searches.  Methods such as single polynomial approximation were found in experiments to be too inaccurate.
+
 In order to have accurate minimum and maximum temperatures, the temperature must be taken every minute or so.  The watchdog timer is used to wake the microcontroller from sleep and take a reading every 64 seconds.
 
 Temperature Calculations
 ------------------------
+
+###Temperature
 
 The equations governing thermistors can be found [here](http://en.wikipedia.org/wiki/Thermistor).  In brief they state that
 
@@ -45,15 +49,15 @@ This means that, in the range -50C to 60C, the resistance ranges from about 3k t
 
 Reversing the above calculations, we see that
 
-    T = B / log(R / r_inf)
+    T = B*T_0 / (B + T_0 * log(R / R_0))
 
-where
 
-    r_inf = R_0 * exp (-B/T_0)
+We take `B` to be the only constant of calibration.
 
-which has a nomial value of 0.1186;
+###Calibration
 
-The fact that all the constant roll into this `r_inf` and `B` means that we can store these values as a calibration constant.  Finally, to calculate the resistance, note that if `f` is the value from 0 to 1 returned by the ADC,
+To calibrate, we take a reading of the resistor at a known temperature.  Then
 
-    f = R / (R + R_ref)
-    R = f / (1-f) * R_ref
+    B = T_0 * T * log ( R / R_0) / (T_0-T)
+
+In practice, the outdoor thermometer is immersed in ice and the temperature `T` is thus 273.15.  The indoor thermometer is calibrated by taking a reading off the outdoor thermometer and taking the indoor/outdoor temperature as the same.

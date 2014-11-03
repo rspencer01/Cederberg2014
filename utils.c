@@ -91,7 +91,6 @@ void delay(int ms)
   }
 }
 
-///\todo Make sure these are reasonable ranges
 /// The mesh values for the logarithm interpolation
 long logMesh      [81] =  {   20,   22,   24,   26,   28,   30,   33,   36,   39,   42,   45,   48,   50,
 55,   60,   65,   70,   75,   80,   85,   90,   95,  100,  110,  120,  130,  140,
@@ -115,10 +114,13 @@ long logValues1000 [81] = {-1609,-1514,-1427,-1347,-1273,-1204,-1109,-1022, -942
 /// returns `1000 * log (x/100)`, hence its name
 int thouloghundredth (int x)
 {
-    if (x<20) return 0;
-    if (x>4200) return 0;
-    int i = 0;
-    while (x>logMesh[i+1]) i++;
-    long interp = logValues1000[i] * (logMesh[i+1]-x)/(logMesh[i+1]-logMesh[i]) + logValues1000[i+1] * (x-logMesh[i])/(logMesh[i+1]-logMesh[i]);
-    return interp;
+  // Maintain our reasonable ranges
+  if (x<20) return 0;
+  if (x>4200) return 0;
+  // Do a linear search for the largest mesh point smaller than the desired value
+  int i = 0;
+  while (x>logMesh[i+1]) i++;
+  // Do linear interpolation
+  long interp = logValues1000[i] * (logMesh[i+1]-x)/(logMesh[i+1]-logMesh[i]) + logValues1000[i+1] * (x-logMesh[i])/(logMesh[i+1]-logMesh[i]);
+  return interp;
 }

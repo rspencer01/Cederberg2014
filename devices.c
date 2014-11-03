@@ -32,14 +32,19 @@ long Bout = 3380;
 /// is the coefficient B.
 void calibrateOutdoor()
 {
+  // Read the resistor
   int actual = readADC(ADC_CHANNEL_OUTDOOR);
   int reference = readADC(ADC_CHANNEL_REFERENCE);
   // Thousand times fraction of voltage
   long f = ((long)actual *1000) / reference;
   // Resistance of thermistor
   volatile long R = f*SERIES_RESISTOR_VALUE/(1000-f);
+  // Actual temperature and R_0
   long Tact = 2732;
   long R0 = 10000;
+  // Split the calculation up to get maximum accuracy (ie
+  // keep the number as big as possible for as long as 
+  // possible)
   Bout = (2982*Tact)/100;
   Bout *= thouloghundredth((100*R)/R0);
   Bout /=100*(2982-Tact);
@@ -52,14 +57,19 @@ void calibrateOutdoor()
 /// is the coefficient B.
 void calibrateIndoor()
 {
-  int actual = readADC(ADC_CHANNEL_OUTDOOR);
+  // Read the resistor
+  int actual = readADC(ADC_CHANNEL_INDOOR);
   int reference = readADC(ADC_CHANNEL_REFERENCE);
   // Thousand times fraction of voltage
   long f = ((long)actual *1000) / reference;
   // Resistance of thermistor
   volatile long R = f*SERIES_RESISTOR_VALUE/(1000-f);
+  // Read the actual temperature and R_0
   long Tact = (readThermometer(OUTDOOR_THERMOMETER)+27315)/10;
   long R0 = 10000;
+  // Split the calculation up to get maximum accuracy (ie
+  // keep the number as big as possible for as long as
+  // possible)
   Bin = (2982*Tact)/100;
   Bin *= thouloghundredth((100*R)/R0);
   Bin /=100*(2982-Tact);
@@ -102,15 +112,19 @@ int readThermometer(int thermometer)
   long f = ((long)actual *1000) / reference;
   // Resistance of thermistor
   long R = f*SERIES_RESISTOR_VALUE/(1000-f);
-  // Temperature calculation,j
+  // Temperature calculation.  Start with the R_0 and T_0 which are known
   long R0 = 10000;
   long T0 = 298;
-  volatile long T;
+  // Reserve space
+  long T;
   long B;
+  // Select the correct coefficient
   if (thermometer==INDOOR_THERMOMETER)
     B = Bin;
   else
     B = Bout;
+  // Do the temperature calculation.  Remember, we want a value 100 times
+  // to big!
   T = (100*B*T0)/(B+T0*thouloghundredth((100*R)/R0)/1000)-27315;
   // Update the min/max
   if (thermometer == INDOOR_THERMOMETER)
