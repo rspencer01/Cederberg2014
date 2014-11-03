@@ -240,8 +240,15 @@ void setState()
       }      
       // Do nothing for now, except remove the tics and go to sleep.
       case STATE_CALIBRATE_INDOOR:
+      {
+        calibrateIndoor();
+        tics = 0;
+        state = STATE_SLEEP;
+        goToSleep = 1;
+      }
       case STATE_CALIBRATE_OUTDOOR:
       {
+        calibrateOutdoor();
         tics = 0;
         state = STATE_SLEEP;
         goToSleep = 1;

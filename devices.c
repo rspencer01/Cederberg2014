@@ -17,6 +17,55 @@ int indoorLow;
 /// The high of the indoor thermometer
 int indoorHigh;
 
+/// The parameter 1/r_inf multiplied by 1000
+//long reciprinf1000 = 8431;
+
+/// The B parameter of the indoor thermometer
+long Bin = 3380;
+/// The B parameter of the outdoor thermometer
+long Bout = 3380;
+
+/// Calibrates the outdoor thermometer
+/// 
+/// The outdoor thermometer is calibrated in ice, at 273K exactly.
+/// The stored value (for both the indoor and outdoor thermistors)
+/// is the coefficient B.
+void calibrateOutdoor()
+{
+  int actual = readADC(ADC_CHANNEL_OUTDOOR);
+  int reference = readADC(ADC_CHANNEL_REFERENCE);
+  // Thousand times fraction of voltage
+  long f = ((long)actual *1000) / reference;
+  // Resistance of thermistor
+  volatile long R = f*SERIES_RESISTOR_VALUE/(1000-f);
+  long Tact = 2732;
+  long R0 = 10000;
+  Bout = (2982*Tact)/100;
+  Bout *= thouloghundredth((100*R)/R0);
+  Bout /=100*(2982-Tact);
+}
+
+/// Calibrates the indoor thermometer
+///
+/// The in thermometer is calibrated _from the outdoor thermometer_
+/// The stored value (for both the indoor and outdoor thermistors)
+/// is the coefficient B.
+void calibrateIndoor()
+{
+  int actual = readADC(ADC_CHANNEL_OUTDOOR);
+  int reference = readADC(ADC_CHANNEL_REFERENCE);
+  // Thousand times fraction of voltage
+  long f = ((long)actual *1000) / reference;
+  // Resistance of thermistor
+  volatile long R = f*SERIES_RESISTOR_VALUE/(1000-f);
+  long Tact = (readThermometer(OUTDOOR_THERMOMETER)+27315)/10;
+  long R0 = 10000;
+  Bin = (2982*Tact)/100;
+  Bin *= thouloghundredth((100*R)/R0);
+  Bin /=100*(2982-Tact);
+}
+
+
 /// Resets the minima and maxima
 ///
 /// Sets the minima to some large value and the maxima to a small
@@ -43,7 +92,8 @@ void resetMinMax(int therm)
 /// Reads the given thermometer
 ///
 /// Reads the thermometer and updates the relevant indoor/outdoor
-/// min/max temperatures
+/// min/max temperatures.  Returns a value 100 times larger than
+/// the actuall temperature
 int readThermometer(int thermometer)
 {
   int actual = readADC(ADC_CHANNEL_OUTDOOR);  
@@ -52,13 +102,16 @@ int readThermometer(int thermometer)
   long f = ((long)actual *1000) / reference;
   // Resistance of thermistor
   long R = f*SERIES_RESISTOR_VALUE/(1000-f);
-  // 100 / r
-  long reciprinf100 = 843;
-  // Paramter.
-  long B = 3380;
-  // Temperature calculation
-  long T = (100*100*B) / hunlogthou(((R*reciprinf100) / 100) / 1000) - 27300;
-    
+  // Temperature calculation,j
+  long R0 = 10000;
+  long T0 = 298;
+  volatile long T;
+  long B;
+  if (thermometer==INDOOR_THERMOMETER)
+    B = Bin;
+  else
+    B = Bout;
+  T = (100*B*T0)/(B+T0*thouloghundredth((100*R)/R0)/1000)-27315;
   // Update the min/max
   if (thermometer == INDOOR_THERMOMETER)
   {

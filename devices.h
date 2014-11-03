@@ -27,6 +27,10 @@ extern int indoorLow;
 // The max indoor temperature
 extern int indoorHigh;
 
+// Calibrate
+void calibrateIndoor();
+void calibrateOutdoor();
+
 // Value of the resistor in series above the thermistors
 #define SERIES_RESISTOR_VALUE 10000
 
