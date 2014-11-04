@@ -6,6 +6,8 @@
 
 #include <avr/io.h>
 #include "gpio.h"
+#include "utils.h"
+#include "Thermometer.h"
 
 /// Internal buffer for port B
 unsigned char portB = 0;
@@ -94,8 +96,6 @@ char readPushButton(int id)
 /// a value from 0 to 1023, where 0 is 0V and 1023 is VCC.
 int readADC(int channel)
 {
-  // The maximum value.  Read off ADC2
-  int max;
   // Drive the thermistors
   portC |= THERMISTOR_DRIVE_PIN;
   setPorts();
@@ -128,4 +128,90 @@ int readADC(int channel)
   setPorts();
   
   return ((resultH&0x03) <<8) + resultL;
+}
+
+/// Handles the pushbutton press
+///
+/// Performs all the state changes etc regarding the indoor push
+/// button press.  Instructs the main loop to immediately undergo
+/// a state change, after setting the state variable correctly.
+void indoorPushbuttonPress()
+{
+  // Set the new state
+  switch (state)
+  {
+    // If displaying the indoor temperature, initiate the min/max
+    // cycle
+    case STATE_INDOOR_DISPLAY:
+    {
+      state = STATE_INDOOR_MIN_WORD;
+      break;
+    }
+    // Fast track the min to max cycle
+    case STATE_INDOOR_MIN_WORD:
+    case STATE_INDOOR_MIN_DISPLAY:
+    {
+      state = STATE_INDOOR_MAX_WORD;
+      break;
+    }
+    // If we are showing max word do nothing, to fast track
+    case STATE_INDOOR_MAX_WORD:
+    break;
+    // If we are in calibration mode, do the indoor
+    case STATE_CALIBRATE_WAIT:
+    {
+      state = STATE_CALIBRATE_INDOOR_PRE;
+      break;
+    }
+    // In other cases, just start to display the temperature
+    default:
+    state = STATE_INDOOR_DISPLAY_PRE;
+  }
+  
+  // Force an immediate change
+  stateChangeTics = 0;
+  changeState = 1;
+}
+
+/// Handles the pushbutton press
+///
+/// Performs all the state changes etc regarding the outdoor push
+/// button press.  Instructs the main loop to immediately undergo
+/// a state change, after setting the state variable correctly.
+void outdoorPushbuttonPress()
+{
+  // Set the new state
+  switch (state)
+  {
+    // If displaying the outdoor temperature, initiate the min/max
+    // cycle
+    case STATE_OUTDOOR_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MIN_WORD;
+      break;
+    }
+    // Fast track the min to max cycle
+    case STATE_OUTDOOR_MIN_WORD:
+    case STATE_OUTDOOR_MIN_DISPLAY:
+    {
+      state = STATE_OUTDOOR_MAX_WORD;
+      break;
+    }
+    // If we are showing max word do nothing, to fast track
+    case STATE_OUTDOOR_MAX_WORD:
+    break;
+    // If we are in calibration mode, do the outdoor
+    case STATE_CALIBRATE_WAIT:
+    {
+      state = STATE_CALIBRATE_OUTDOOR_PRE;
+      break;
+    }
+    // In other cases, just start to display the temperature
+    default:
+    state = STATE_OUTDOOR_DISPLAY_PRE;
+  }
+  
+  // Force an immediate change
+  stateChangeTics = 0;
+  changeState = 1;
 }

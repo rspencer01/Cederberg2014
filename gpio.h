@@ -45,4 +45,8 @@ char readPushButton(int);
 
 // Reads the ADC on ADC0 or ADC1
 int readADC(int);
+
+// Event handlers for the buttons
+void indoorPushbuttonPress();
+void outdoorPushbuttonPress();
 #endif /* GPIO_H_ */
