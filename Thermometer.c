@@ -62,7 +62,7 @@ int main(void)
     if (changeState)
     {
       changeState = 0;
-      setState();
+      updateState();
     }      
   }
 }
@@ -72,9 +72,7 @@ int main(void)
 /// This function is to be called every second from the timer.
 /// It displays things like min/max and temperatures, and advances
 /// us through the display cycles.
-/// 
-/// \todo Call this something else.  This name is not clear
-void setState()
+void updateState()
 {
   // If we are to change something, do so
   if (stateChangeTics == 0)

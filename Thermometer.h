@@ -50,6 +50,6 @@ extern volatile char goToSleep;
 extern volatile char changeState;
 
 // Set the display etc to the relevant state
-void setState();
+void updateState();
 
 #endif /* COMPASS_H_ */
