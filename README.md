@@ -15,6 +15,8 @@ Pressing a pushbutton and releasing will result in the relevant temperature for 
 
 Furthermore, holding down a pushbutton for 5 seconds will result in the relevant minimum and maximum being cleared.
 
+Finally, holding both buttons down for 5 seconds will result in the system going into calibration mode, where either the indoor or outdoor thermometer can be calibrated.
+
 Desgin Considerations
 ---------------------
 
@@ -26,9 +28,9 @@ The device is driven by 2 AA batteries.  As such, battery life is paramount.  Th
 
  * When the displays are not on and no reading is being taken, the microcontroller will be in "sleep mode".  This is an extremely low current draw mode.  Measurements were not accurate enough to determine actual current draw in sleep mode (noise was overriding).
 
- * To a computer programmer, the `thouloghundredth` function may seem odd.  Why not use a library to calculate log?  The reason is that we are not even afforded the privilidge of `long long`s much less `float`s.  All operations must be integer, and it turns out that a simple linear search on mesh points is accurate enough and easier to read than other searches.  Methods such as single polynomial approximation were found in experiments to be too inaccurate.
-
 In order to have accurate minimum and maximum temperatures, the temperature must be taken every minute or so.  The watchdog timer is used to wake the microcontroller from sleep and take a reading every 64 seconds.
+
+To a computer programmer, the `thouloghundredth` function may seem odd.  Why not use a library to calculate log?  The reason is that we are not even afforded the privilidge of `long long`s much less `float`s.  All operations must be integer, and it turns out that a simple linear search on mesh points is accurate enough and easier to read than other searches.  Methods such as single polynomial approximation were found in experiments to be too inaccurate.
 
 Temperature Calculations
 ------------------------
