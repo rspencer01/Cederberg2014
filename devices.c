@@ -6,6 +6,7 @@
 #include "devices.h"
 #include "gpio.h"
 #include "utils.h"
+#include "eeprom.h"
 
 /// The low of the outdoor thermometer
 int outdoorLow;
@@ -24,6 +25,24 @@ int indoorHigh;
 long Bin = 3380;
 /// The B parameter of the outdoor thermometer
 long Bout = 3380;
+
+/// Sets up all the calibration constants etc for the thermometers
+/// 
+/// Attempts to read the B factors from EEPROM and corrects them
+/// if they are obviously way out (occurs when we have not calibrated
+/// before)
+void initDevices()
+{
+  Bin  = readEEPROM(0x10) << 8;
+  Bin += readEEPROM(0x11);
+  
+  Bout  = readEEPROM(0x00) << 8;
+  Bout += readEEPROM(0x01);  
+  Bin=Bout=0;
+  
+  if ((Bin > 6000) || (Bin<1300)) Bin=3380;
+  if ((Bout > 6000) || (Bout<1300)) Bout=3380;
+}
 
 /// Calibrates the outdoor thermometer
 /// 
@@ -48,6 +67,8 @@ void calibrateOutdoor()
   Bout = (2982*Tact)/100;
   Bout *= thouloghundredth((100*R)/R0);
   Bout /=100*(2982-Tact);
+  writeEEPROM(0x00,Bout>>8);
+  writeEEPROM(0x01,Bout&0xFF); 
 }
 
 /// Calibrates the indoor thermometer
@@ -55,10 +76,12 @@ void calibrateOutdoor()
 /// The in thermometer is calibrated _from the outdoor thermometer_
 /// The stored value (for both the indoor and outdoor thermistors)
 /// is the coefficient B.
+/// 
+/// \todo Make this read from a different pin
 void calibrateIndoor()
 {
   // Read the resistor
-  int actual = readADC(ADC_CHANNEL_INDOOR);
+  int actual = readADC(ADC_CHANNEL_OUTDOOR);
   int reference = readADC(ADC_CHANNEL_REFERENCE);
   // Thousand times fraction of voltage
   long f = ((long)actual *1000) / reference;
@@ -73,6 +96,8 @@ void calibrateIndoor()
   Bin = (2982*Tact)/100;
   Bin *= thouloghundredth((100*R)/R0);
   Bin /=100*(2982-Tact);
+  writeEEPROM(0x10,Bin>>8);
+  writeEEPROM(0x11,Bin&0xFF);
 }
 
 

@@ -27,6 +27,9 @@ extern int indoorLow;
 // The max indoor temperature
 extern int indoorHigh;
 
+// Set up
+void initDevices();
+
 // Calibrate
 void calibrateIndoor();
 void calibrateOutdoor();

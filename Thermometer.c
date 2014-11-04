@@ -37,10 +37,11 @@ int main(void)
   initMicro();
   initPorts();
   initTimers();
+  initDevices();
   // Reset the thermometer
   resetMinMax(INDOOR_THERMOMETER);
   resetMinMax(OUTDOOR_THERMOMETER);
-  
+ 
   goToSleep = 1;
   // Loop forever
   while(1)
@@ -245,6 +246,7 @@ void setState()
         tics = 0;
         state = STATE_SLEEP;
         goToSleep = 1;
+        break;
       }
       case STATE_CALIBRATE_OUTDOOR:
       {
@@ -252,6 +254,7 @@ void setState()
         tics = 0;
         state = STATE_SLEEP;
         goToSleep = 1;
+        break;
       }
       // Something went wrong.  Just go to sleep.
       default:
